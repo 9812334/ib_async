@@ -1,3 +1,39 @@
 2024-04-30 10:18:37,393 - __main__ - INFO - This is an info message
 2024-04-30 10:18:37,393 - __main__ - WARNING - This is a warning message
 2024-04-30 10:18:37,396 - __main__ - ERROR - This is an error message
+2024-04-30 10:43:32,189 - __main__ - INFO - This is an info message
+2024-04-30 10:43:32,189 - __main__ - INFO - This is an info message
+2024-04-30 10:43:32,189 - __main__ - WARNING - This is a warning message
+2024-04-30 10:43:32,189 - __main__ - WARNING - This is a warning message
+2024-04-30 10:43:32,200 - __main__ - ERROR - This is an error message
+2024-04-30 10:43:32,200 - __main__ - ERROR - This is an error message
+2024-04-30 10:55:53,932 - __main__ - INFO - {'strategy': 'SELL TO OPEN SCALP 0.1', 'contract': 'NQM2024', 'tick_increment': 0.25, 'open_qty': 1, 'open_type': 'LIMIT', 'open_action': 'SELL', 'open_ref': 'bid', 'open_ticks': 10, 'close_qty': 1, 'close_type': 'LIMIT', 'close_action': 'BUY', 'close_ref': 'open_price_fill', 'close_ticks': -10}
+2024-04-30 10:55:53,932 - __main__ - INFO - {'strategy': 'SELL TO OPEN SCALP 0.1', 'contract': 'NQM2024', 'tick_increment': 0.25, 'open_qty': 1, 'open_type': 'LIMIT', 'open_action': 'SELL', 'open_ref': 'bid', 'open_ticks': 10, 'close_qty': 1, 'close_type': 'LIMIT', 'close_action': 'BUY', 'close_ref': 'open_price_fill', 'close_ticks': -10}
+2024-04-30 10:55:53,942 - __main__ - INFO - OPEN ORDER::
+2024-04-30 10:55:53,942 - __main__ - INFO - OPEN ORDER::
+2024-04-30 10:56:05,789 - __main__ - INFO - {'strategy': 'SELL TO OPEN SCALP 0.1', 'contract': 'NQM2024', 'tick_increment': 0.25, 'open_qty': 1, 'open_type': 'LIMIT', 'open_action': 'SELL', 'open_ref': 'bid', 'open_ticks': 10, 'close_qty': 1, 'close_type': 'LIMIT', 'close_action': 'BUY', 'close_ref': 'open_price_fill', 'close_ticks': -10}
+2024-04-30 10:56:05,789 - __main__ - INFO - {'strategy': 'SELL TO OPEN SCALP 0.1', 'contract': 'NQM2024', 'tick_increment': 0.25, 'open_qty': 1, 'open_type': 'LIMIT', 'open_action': 'SELL', 'open_ref': 'bid', 'open_ticks': 10, 'close_qty': 1, 'close_type': 'LIMIT', 'close_action': 'BUY', 'close_ref': 'open_price_fill', 'close_ticks': -10}
+2024-04-30 10:56:05,798 - __main__ - INFO - OPEN ORDER::
+2024-04-30 10:56:05,798 - __main__ - INFO - OPEN ORDER::
+2024-04-30 10:56:05,800 - __main__ - INFO - Placing close trade: BUY, LIMIT, totalQuantity 1, lmtPrice 17747.25
+2024-04-30 10:56:05,800 - __main__ - INFO - Placing close trade: BUY, LIMIT, totalQuantity 1, lmtPrice 17747.25
+2024-04-30 10:56:07,330 - __main__ - INFO - CLOSE ORDER::
+2024-04-30 10:56:07,330 - __main__ - INFO - CLOSE ORDER::
+2024-04-30 10:56:07,332 - __main__ - INFO - ALL OPEN ORDERS:
+2024-04-30 10:56:07,332 - __main__ - INFO - ALL OPEN ORDERS:
+2024-04-30 10:56:07,358 - __main__ - INFO - Current position:
+2024-04-30 10:56:07,358 - __main__ - INFO - Current position:
+2024-04-30 10:56:07,360 - __main__ - INFO - NQ:  -6.0 @ 17788.3626008525
+2024-04-30 10:56:07,360 - __main__ - INFO - NQ:  -6.0 @ 17788.3626008525
+2024-04-30 10:56:12,372 - __main__ - INFO - OPEN ORDER::
+2024-04-30 10:56:12,372 - __main__ - INFO - OPEN ORDER::
+2024-04-30 10:56:12,373 - __main__ - INFO - Placing close trade: BUY, LIMIT, totalQuantity 1, lmtPrice 17747.25
+2024-04-30 10:56:12,373 - __main__ - INFO - Placing close trade: BUY, LIMIT, totalQuantity 1, lmtPrice 17747.25
+2024-04-30 10:56:13,910 - __main__ - INFO - CLOSE ORDER::
+2024-04-30 10:56:13,910 - __main__ - INFO - CLOSE ORDER::
+2024-04-30 10:56:13,910 - __main__ - INFO - ALL OPEN ORDERS:
+2024-04-30 10:56:13,910 - __main__ - INFO - ALL OPEN ORDERS:
+2024-04-30 10:56:13,924 - __main__ - INFO - Current position:
+2024-04-30 10:56:13,924 - __main__ - INFO - Current position:
+2024-04-30 10:56:13,924 - __main__ - INFO - NQ:  -6.0 @ 17788.3626008525
+2024-04-30 10:56:13,924 - __main__ - INFO - NQ:  -6.0 @ 17788.3626008525
