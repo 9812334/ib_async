@@ -1,9 +1,22 @@
-def print_account_summary(ib):
-    acct_fields = ib.accountSummary(account="U10394496")
+import os
+import winsound
 
-    for f in acct_fields:
-        if "DayTrades" not in f.tag:
-            print(f.tag, ":", f.value)
+
+def play_beep():
+    # On Mac, use the "afplay" command to play a beep sound
+    if os.name == 'posix':
+        os.system('afplay /System/Library/Sounds/Glass.aiff')
+    else:
+        winsound.Beep(2500, 500)
+        
+    
+def get_all_openorders(ib, sym="NQ"):
+    trades = ib.reqAllOpenOrders()
+    trades.sort(key=lambda trade: trade.order.lmtPrice)
+
+    trades = [trade for trade in trades if trade.contract.symbol == sym]
+    return trades
+
 
 def print_cancelled_orders(ib):
     # canceled orders
@@ -37,6 +50,13 @@ def print_all_openorders(ib, sym="NQ"):
         )
 
 
+def print_account_summary(ib):
+    acct_fields = ib.accountSummary(account="U10394496")
+
+    for f in acct_fields:
+        if "DayTrades" not in f.tag:
+            print(f.tag, ":", f.value)
+            
 def print_trades(ib, trades):
     print(f"symbol\tpermId\t\tstatus\t\taction\tfilled\tremaining\tlmtPrice")
 
@@ -49,15 +69,6 @@ def print_trades(ib, trades):
         print(
             f"{trade.contract.symbol}\t{order.permId}\t{orderstatus.status}\t{order.action}\t{orderstatus.filled}\t{orderstatus.remaining}\t\t{order.lmtPrice}\t"
         )
-
-
-def get_all_openorders(ib, sym="NQ"):
-    trades = ib.reqAllOpenOrders()
-    trades.sort(key=lambda trade: trade.order.lmtPrice)
-
-    trades = [trade for trade in trades if trade.contract.symbol == sym]
-    return trades
-
 
 def print_order(o):
     if o is None:
