@@ -4,13 +4,14 @@ import winsound
 def display_full_output():
     display(HTML("<style>.output_subarea { overflow: auto; }</style>"))
 
-def play_beep():
+def play_beep(freq = 2500, dur = 500):
     # On Mac, use the "afplay" command to play a beep sound
     if os.name == 'posix':
         os.system('afplay /System/Library/Sounds/Glass.aiff')
     else:
         winsound.Beep(2500, 500)
-        
+
+play_beep(100, 100)
     
 def get_all_openorders(ib, sym="NQ"):
     trades = ib.reqAllOpenOrders()
