@@ -5,6 +5,18 @@ def print_account_summary(ib):
         if "DayTrades" not in f.tag:
             print(f.tag, ":", f.value)
 
+def print_cancelled_orders(ib):
+    # canceled orders
+    print(f"permId\t\taction\t\ttotalQuantity\tfilledQuantity\t\tlmtPrice")
+
+    closedOrders = ib.orders()
+    [
+        print(
+            f"{order.permId}\t{order.action}\t\t{order.totalQuantity}\t\t{order.filledQuantity}\t\t\t{order.lmtPrice}"
+        )
+        for order in closedOrders
+        if order.filledQuantity == 0
+    ]
 
 def print_all_openorders(ib, sym="NQ"):
     print(f"symbol\tpermId\t\tstatus\t\taction\tfilled\tremaining\tlmtPrice")
