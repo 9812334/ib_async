@@ -1,6 +1,8 @@
 import os
 import winsound
 
+def display_full_output():
+    display(HTML("<style>.output_subarea { overflow: auto; }</style>"))
 
 def play_beep():
     # On Mac, use the "afplay" command to play a beep sound
@@ -82,5 +84,5 @@ def print_order(o):
     print(f"symbol\tpermId\t\tstatus\t\taction\tfilled\tremaining\tlmtPrice")
 
     print(
-        f"{contract.symbol}\t{order.permId}\t{orderStatus.status}\t{order.action}\t{orderStatus.filled}\t{orderStatus.remaining}\t\t{order.lmtPrice}\t"
+        f"{contract.symbol}\t{order.permId}\t{orderStatus.status}\t\t{order.action}\t{orderStatus.filled}\t{orderStatus.remaining}\t\t{order.lmtPrice}\t"
     )
