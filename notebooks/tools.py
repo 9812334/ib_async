@@ -1,17 +1,17 @@
 import os
-import winsound
 
-def display_full_output():
-    display(HTML("<style>.output_subarea { overflow: auto; }</style>"))
+if os.name != "posix":
+    import winsound
+
 
 def play_beep():
     # On Mac, use the "afplay" command to play a beep sound
-    if os.name == 'posix':
-        os.system('afplay /System/Library/Sounds/Glass.aiff')
+    if os.name == "posix":
+        os.system("afplay /System/Library/Sounds/Glass.aiff")
     else:
         winsound.Beep(2500, 500)
-        
-    
+
+
 def get_all_openorders(ib, sym="NQ"):
     trades = ib.reqAllOpenOrders()
     trades.sort(key=lambda trade: trade.order.lmtPrice)
@@ -32,6 +32,7 @@ def print_cancelled_orders(ib):
         for order in closedOrders
         if order.filledQuantity == 0
     ]
+
 
 def print_all_openorders(ib, sym="NQ"):
     print(f"symbol\tpermId\t\tstatus\t\taction\tfilled\tremaining\tlmtPrice")
@@ -58,7 +59,8 @@ def print_account_summary(ib):
     for f in acct_fields:
         if "DayTrades" not in f.tag:
             print(f.tag, ":", f.value)
-            
+
+
 def print_trades(ib, trades):
     print(f"symbol\tpermId\t\tstatus\t\taction\tfilled\tremaining\tlmtPrice")
 
@@ -71,6 +73,7 @@ def print_trades(ib, trades):
         print(
             f"{trade.contract.symbol}\t{order.permId}\t{orderstatus.status}\t{order.action}\t{orderstatus.filled}\t{orderstatus.remaining}\t\t{order.lmtPrice}\t"
         )
+
 
 def print_order(o):
     if o is None:
