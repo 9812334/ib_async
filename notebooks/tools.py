@@ -4,7 +4,7 @@ if os.name != "posix":
     import winsound
 
 
-def play_beep():
+def play_beep(freq = 2500, dur = 500):
     # On Mac, use the "afplay" command to play a beep sound
     if os.name == "posix":
         os.system("afplay /System/Library/Sounds/Glass.aiff")
