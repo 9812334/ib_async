@@ -1,5 +1,5 @@
-import PyQt5.QtWidgets as qt
-# import PySide6.QtWidgets as qt
+# import PyQt5.QtWidgets as qt
+import PySide6.QtWidgets as qt
 
 from ib_async import IB, util
 from ib_async.contract import *  # noqa
@@ -116,8 +116,8 @@ class Window(qt.QWidget):
 if __name__ == "__main__":
     util.patchAsyncio()
     util.useQt()
-    # util.useQt('PySide6')
-    window = Window("127.0.0.1", 7497, 1)
+    util.useQt('PySide6')
+    window = Window("127.0.0.1", 4001, 211)
     window.resize(600, 400)
     window.show()
     IB.run()

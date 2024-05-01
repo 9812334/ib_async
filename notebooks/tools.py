@@ -4,7 +4,7 @@ if os.name != "posix":
     import winsound
 
 
-def play_beep(freq = 2500, dur = 500):
+def play_beep(freq=2500, dur=500):
     # On Mac, use the "afplay" command to play a beep sound
     if os.name == "posix":
         os.system("afplay /System/Library/Sounds/Glass.aiff")
@@ -87,5 +87,5 @@ def print_order(o):
     print(f"symbol\tpermId\t\tstatus\t\taction\tfilled\tremaining\tlmtPrice")
 
     print(
-        f"{contract.symbol}\t{order.permId}\t{orderStatus.status}\t\t{order.action}\t{orderStatus.filled}\t{orderStatus.remaining}\t\t{order.lmtPrice}\t"
+        f"{contract.symbol}\t{order.permId}\t{orderStatus.status}\t{order.action}\t{orderStatus.filled}\t{orderStatus.remaining}\t\t{order.lmtPrice}\t"
     )
