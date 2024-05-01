@@ -11,6 +11,7 @@ def play_beep(freq=2500, dur=500):
     else:
         winsound.Beep(2500, 500)
 
+play_beep(500,500)
 
 def get_all_openorders(ib, sym="NQ"):
     trades = ib.reqAllOpenOrders()
