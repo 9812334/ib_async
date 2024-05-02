@@ -11,7 +11,9 @@ def play_beep(freq=2500, dur=500):
     else:
         winsound.Beep(2500, 500)
 
-play_beep(500,500)
+
+play_beep(500, 500)
+
 
 def get_all_openorders(ib, sym="NQ"):
     trades = ib.reqAllOpenOrders()
@@ -38,7 +40,7 @@ def print_cancelled_orders(ib):
 def print_all_openorders(ib, sym="NQ"):
     print(f"symbol\tpermId\t\tstatus\t\taction\tfilled\tremaining\tlmtPrice")
 
-    trades = ib.reqAllOpenOrders()
+    trades = ib.reqOpenOreders()
 
     trades.sort(key=lambda trade: trade.order.lmtPrice)
 
@@ -51,6 +53,18 @@ def print_all_openorders(ib, sym="NQ"):
 
         print(
             f"{trade.contract.symbol}\t{order.permId}\t{orderstatus.status}\t{order.action}\t{orderstatus.filled}\t{orderstatus.remaining}\t\t{order.lmtPrice}\t"
+        )
+
+
+def print_openorders(ib):
+    orders = ib.openOrders()
+    orders.sort(key=lambda order: order.lmtPrice)
+
+    # Order(orderId=658, clientId=3124, permId=342738244, action='SELL', totalQuantity=1.0, orderType='LMT', lmtPrice=17692.5, auxPrice=0.0, tif='GTC', ocaType=3, displaySize=2147483647, rule80A='0', openClose='', volatilityType=0, deltaNeutralOrderType='None', referencePriceType=0, account='U10394496', clearingIntent='IB', adjustedOrderType='None', cashQty=0.0, dontUseAutoPriceForHedge=True)
+
+    for order in orders:
+        print(
+            f"{order.permId}\t{order.action}\t{order.totalQuantity}\t{order.lmtPrice}\t{order.tif}"
         )
 
 
