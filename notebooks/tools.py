@@ -37,25 +37,6 @@ def print_cancelled_orders(ib):
     ]
 
 
-def print_all_openorders(ib, sym="NQ"):
-    print(f"symbol\tpermId\t\tstatus\t\taction\tfilled\tremaining\tlmtPrice")
-
-    trades = ib.reqOpenOreders()
-
-    trades.sort(key=lambda trade: trade.order.lmtPrice)
-
-    for trade in trades:
-        orderstatus = trade.orderStatus
-        order = trade.order
-
-        if trade.contract.symbol != sym:
-            continue
-
-        print(
-            f"{trade.contract.symbol}\t{order.permId}\t{orderstatus.status}\t{order.action}\t{orderstatus.filled}\t{orderstatus.remaining}\t\t{order.lmtPrice}\t"
-        )
-
-
 def print_openorders(ib):
     orders = ib.openOrders()
     orders.sort(key=lambda order: order.lmtPrice)
@@ -64,7 +45,7 @@ def print_openorders(ib):
 
     for order in orders:
         print(
-            f"{order.permId}\t{order.action}\t{order.totalQuantity}\t{order.lmtPrice}\t{order.tif}"
+            f"{order.permId}\t\t{order.action}\t{order.totalQuantity}\t{order.lmtPrice}\t{order.tif}"
         )
 
 
@@ -77,7 +58,6 @@ def print_account_summary(ib):
 
 
 def print_trades(ib, trades):
-    print(f"symbol\tpermId\t\tstatus\t\taction\tfilled\tremaining\tlmtPrice")
 
     trades.sort(key=lambda trade: trade.order.lmtPrice)
 
@@ -86,7 +66,7 @@ def print_trades(ib, trades):
         order = trade.order
 
         print(
-            f"{trade.contract.symbol}\t{order.permId}\t{orderstatus.status}\t{order.action}\t{orderstatus.filled}\t{orderstatus.remaining}\t\t{order.lmtPrice}\t"
+            f"{trade.contract.symbol}\t{order.permId}\t{orderstatus.status}\t\t{order.action}\t{orderstatus.filled}\t{orderstatus.remaining}\t\t{order.lmtPrice}\t"
         )
 
 
