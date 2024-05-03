@@ -1,0 +1,2 @@
+2024-05-03 03:24:28,934 ib_async.wrapper INFO Warning 2119, reqId -1: Market data farm is connecting:usfuture
+2024-05-03 03:24:29,468 ib_async.wrapper INFO Warning 2104, reqId -1: Market data farm connection is OK:usfuture
