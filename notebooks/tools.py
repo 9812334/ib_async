@@ -1,4 +1,13 @@
 import os
+import os
+from supabase import create_client, Client
+
+url: str = "https://dbcizmxdlufqncxipqwt.supabase.co"
+key: str = (
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRiY2l6bXhkbHVmcW5jeGlwcXd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDE4NDkxMTMsImV4cCI6MjAxNzQyNTExM30.ys98bhleekrfDJAbrMMqXGsVh1XMa3Vtl8O62s7D5as"
+)
+supabase: Client = create_client(url, key)
+
 
 if os.name != "posix":
     import winsound
@@ -12,7 +21,34 @@ def play_beep(freq=2500, dur=500):
         winsound.Beep(2500, 500)
 
 
-play_beep(500, 500)
+def import_trades(trades):
+    for t in trades:
+        print(t)
+        d = {
+            "contract_sectype": t.contract.secType,
+            "contract_conid": int(t.contract.conId),
+            "contract_symbol": t.contract.symbol,
+            "contract_lasttradedateorcontractmonth": t.contract.lastTradeDateOrContractMonth,
+            "contract_multiplier": int("1" or t.contract.multiplier),
+            "contract_currency": t.contract.currency,
+            "contract_localsymbol": t.contract.localSymbol,
+            "contract_tradingclass": t.contract.tradingClass,
+            "order_permid": int(t.order.permId),
+            "order_action": t.order.action,
+            "order_ordertype": t.order.orderType,
+            "order_lmtprice": float(t.order.lmtPrice),
+            "order_tif": t.order.tif,
+            "order_ocatype": t.order.ocaType,
+            "order_account": t.order.account,
+            "order_autocanceldate": t.order.autoCancelDate,
+            "order_filledquantity": float(t.order.filledQuantity),
+            "order_reffuturesconid": int(t.order.refFuturesConId),
+            "orderstatus": t.orderStatus.status,
+        }
+
+        data, count = supabase.table("trades").upsert(d).execute()
+
+    print(f"Imported {len(trades)} trades")
 
 
 def get_all_openorders(ib, sym="NQ"):
@@ -35,18 +71,6 @@ def print_cancelled_orders(ib):
         for order in closedOrders
         if order.filledQuantity == 0
     ]
-
-
-def print_openorders(ib):
-    orders = ib.openOrders()
-    orders.sort(key=lambda order: order.lmtPrice)
-
-    # Order(orderId=658, clientId=3124, permId=342738244, action='SELL', totalQuantity=1.0, orderType='LMT', lmtPrice=17692.5, auxPrice=0.0, tif='GTC', ocaType=3, displaySize=2147483647, rule80A='0', openClose='', volatilityType=0, deltaNeutralOrderType='None', referencePriceType=0, account='U10394496', clearingIntent='IB', adjustedOrderType='None', cashQty=0.0, dontUseAutoPriceForHedge=True)
-
-    for order in orders:
-        print(
-            f"{order.permId}\t\t{order.action}\t{order.totalQuantity}\t{order.lmtPrice}\t{order.tif}"
-        )
 
 
 def print_account_summary(ib):
