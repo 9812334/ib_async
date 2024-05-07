@@ -122,7 +122,7 @@ class FlexReport:
 
 if __name__ == "__main__":
     util.logToConsole()
-    report = FlexReport("945692423458902392892687", "272555")
+    report = FlexReport("750349798752953915870152", "883542")
     print(report.topics())
     trades = report.extract("Trade")
     print(trades)
