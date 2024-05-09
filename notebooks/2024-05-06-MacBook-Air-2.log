@@ -1469,3 +1469,16 @@
 2024-05-07 02:02:10,076 ib_async.wrapper INFO Warning 2104, reqId -1: Market data farm connection is OK:usfarm
 2024-05-07 02:02:33,787 ib_async.wrapper ERROR Error 1102, reqId -1: Connectivity between IB and Trader Workstation has been restored - data maintained. The following farms are connected: usfuture; usfarm; secdefil. The following farms are not connected: ushmds.
 2024-05-07 02:02:33,807 ib_async.wrapper ERROR Error 1102, reqId -1: Connectivity between IB and Trader Workstation has been restored - data maintained. The following farms are connected: usfuture; usfarm; secdefil. The following farms are not connected: ushmds.
+2024-05-07 02:05:03,503 ib_async.wrapper ERROR Error 1100, reqId -1: Connectivity between IB and Trader Workstation has been lost.
+2024-05-07 02:05:03,519 ib_async.wrapper ERROR Error 1100, reqId -1: Connectivity between IB and Trader Workstation has been lost.
+2024-05-07 02:05:34,014 ib_async.wrapper ERROR Error 1100, reqId -1: Connectivity between IB and Trader Workstation has been lost.
+2024-05-07 02:05:34,016 ib_async.wrapper ERROR Error 1100, reqId -1: Connectivity between IB and Trader Workstation has been lost.
+2024-05-07 02:05:34,537 ib_async.wrapper ERROR Error 317, reqId 370: Market depth data has been RESET. Please empty deep book contents before applying any new entries., contract: Contract(secType='FUT', conId=620730920, symbol='NQ', lastTradeDateOrContractMonth='20240621', multiplier='20', exchange='CME', currency='USD', localSymbol='NQM4', tradingClass='NQ')
+2024-05-07 02:05:34,538 ib_async.wrapper ERROR Error 317, reqId 6: Market depth data has been RESET. Please empty deep book contents before applying any new entries., contract: Contract(secType='FUT', conId=620730920, symbol='NQ', lastTradeDateOrContractMonth='20240621', multiplier='20', exchange='CME', currency='USD', localSymbol='NQM4', tradingClass='NQ')
+2024-05-07 02:05:34,538 ib_async.wrapper ERROR Error 317, reqId 7: Market depth data has been RESET. Please empty deep book contents before applying any new entries., contract: Contract(secType='FUT', conId=620730920, symbol='NQ', lastTradeDateOrContractMonth='20240621', multiplier='20', exchange='CME', currency='USD', localSymbol='NQM4', tradingClass='NQ')
+2024-05-07 02:05:34,538 ib_async.wrapper INFO Warning 2103, reqId -1: Market data farm connection is broken:usfuture
+2024-05-07 02:05:34,539 ib_async.wrapper INFO Warning 2103, reqId -1: Market data farm connection is broken:usfuture
+2024-05-07 02:05:34,541 ib_async.wrapper INFO Warning 2157, reqId -1: Sec-def data farm connection is broken:secdefil
+2024-05-07 02:05:34,543 ib_async.wrapper INFO Warning 2157, reqId -1: Sec-def data farm connection is broken:secdefil
+2024-05-07 02:05:34,546 ib_async.wrapper INFO Warning 2103, reqId -1: Market data farm connection is broken:usfarm
+2024-05-07 02:05:34,547 ib_async.wrapper INFO Warning 2103, reqId -1: Market data farm connection is broken:usfarm
