@@ -108,3 +108,6 @@ def print_order(o):
     print(
         f"{contract.symbol}\t{order.permId}\t{orderStatus.status}\t{order.action}\t{orderStatus.filled}\t{orderStatus.remaining}\t\t{order.lmtPrice}\t"
     )
+
+
+def 
