@@ -110,4 +110,5 @@ def print_order(o):
     )
 
 
-def 
+def push_msg():
+    print()
