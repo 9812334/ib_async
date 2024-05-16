@@ -1,5 +1,4 @@
 import os
-import os
 from supabase import create_client, Client
 
 url: str = "https://dbcizmxdlufqncxipqwt.supabase.co"
@@ -18,7 +17,7 @@ def play_beep(freq=2500, dur=500):
     if os.name == "posix":
         os.system("afplay /System/Library/Sounds/Glass.aiff")
     else:
-        winsound.Beep(2500, 500)
+        winsound.Beep(freq, dur)
 
 
 def import_trades(trades):
