@@ -54,7 +54,7 @@ while True:
         play_beep()
 
 
-    print("OPEN ORDER::")
+    print(f"OPEN ORDER::")
     print_order(open_trade)
     print()
 
@@ -65,7 +65,7 @@ while True:
             )
 
             if datetime.datetime.now() - open_order_ts > datetime.timedelta(minutes=5):
-                print("Cancelling order due to timeout")
+                print(f"Cancelling order due to timeout")
                 ib.cancelOrder(open_trade.order)
                 ib.sleep(1)
                 print(open_trade.log)
@@ -106,9 +106,9 @@ while True:
             open_trade.orderStatus.status == "Inactive"
             or open_trade.orderStatus.status == "Cancelled"
         ) and close_trade is None:
-            print("***** order is inactive *****")
+            print(f"***** order is inactive *****")
             print(open_trade.log)
-            print("*****************************")
+            print(f"*****************************")
             open_trade = None
 
     print(f"CLOSE ORDER::")
@@ -117,17 +117,17 @@ while True:
     if close_trade is not None:
         if close_trade.orderStatus.status == "Filled":
             play_beep()
-            print("Close trade filled @ {}".format(close_trade.orderStatus.avgFillPrice))
+            print(f"Close trade filled @ {}".format(close_trade.orderStatus.avgFillPrice))
             open_trade = None
             close_trade = None
     print()
     print()
-    print("ALL OPEN ORDERS:")
+    print(f"ALL OPEN ORDERS:")
     print_all_openorders(ib=ib)
     print()
 
     # get current position of contract NQM2024
-    print("Current position:")
+    print(f"Current position:")
     print(
         f"{future.contract.symbol}:  {future.position} @ {future.avgCost/float(contract.multiplier)}"
     )
@@ -135,5 +135,5 @@ while True:
     print_account_summary(ib=ib)
     print()
     for i in range(5):
-        print(".", end="")
+        print(f".", end="")
         time.sleep(1)

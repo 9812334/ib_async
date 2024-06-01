@@ -35,7 +35,7 @@ def test_contract_format_data_pd():
         df = df.drop(columns=["average", "barCount"])
         # df.set_index("date", inplace=True)
 
-        print("\n", df)
+        print(f"\n", df)
 
         # df = df.iloc[::-1]
         # df.to_csv("{}.csv".format(symbol.symbol))
