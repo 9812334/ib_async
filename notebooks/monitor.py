@@ -1,5 +1,4 @@
 from tools import *
-from alerts import *
 
 
 parser = argparse.ArgumentParser(description="IBKR Script")
@@ -30,38 +29,8 @@ parser.add_argument(
 args = parser.parse_args()
 
 
-def monitor_overview(duration=5):
-    executions = []
-    positions = []
-    open_orders = []
-    
-    while ib.sleep(duration):        
-        print_clear()
-        print(f"-" * 50)
-
-        print_account_summary(accounts = ["U10394496"])
-        print(f"-" * 50)
-
-        current_executions = print_executions()
-        print(f"-" * 50)
-
-        if len(current_executions) != len(executions):
-            alert()        
-
-        current_open_orders = print_openOrders()
-        print(f"-" * 50)
-
-        current_positions = print_positions(contract=NQM4)
-        print(f"-" * 50)
-        
-        print_orderbook()
-        print(f"-" * 50)
-
-        executions = current_executions
-        open_orders = current_open_orders
-        positions = current_positions
-
 
 if __name__ == "__main__":
     print(args)
+    # ticker = ticker_init()
     monitor_overview(duration=args.dur)

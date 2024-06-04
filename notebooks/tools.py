@@ -24,17 +24,14 @@ randint = lambda a=1, b=10: random.randint(a, b)
 ib = IB()
 ib.connect("127.0.0.1", 4001, randint(1, 99))
 
-# NQM2024 contract
-print(f"Setting contract to NQM2024 symbol / JUN 2024 / Contract(conId=620730920)")
+ib.reqAccountSummary() # run only once
+ib.reqAllOpenOrders()
+ib.reqPositions()
+
+
 NQM4 = Contract(conId=620730920)
 ib.qualifyContracts(NQM4)
-
 ticker = ib.reqMktDepth(contract=NQM4, isSmartDepth=True)
-
-# account info
-ib.reqAllOpenOrders()
-ib.reqAccountSummary()
-ib.reqPositions()
 
 ORDER_COLS = [
     "localSymbol",
@@ -85,6 +82,33 @@ OPEN_TRADE_COLS = [
     "totalQuantity",
     "remaining",
 ]
+
+def get_trade_by_permid(permid):
+    return next((trade for trade in ib.trades() if trade.order.permId == permid), None)
+
+
+def get_last_trade_permid(n = -1):
+    try:
+        return ib.trades()[n].order.permId
+    except IndexError:
+        return None
+
+def get_last_trade():
+    try:
+        last_trade_permid = ib.executions()[-1].permId
+        return get_trade_by_permid(last_trade_permid)
+    except IndexError:
+        return None
+
+def get_cancelled_orders():
+    return [trade for trade in ib.trades() if trade.fills != []]
+
+
+def get_last_executed_trade(n = -1):
+    try:
+        return get_trade_by_permid(permid = (ib.executions()[n].permId))
+    except IndexError:
+        return None
 
 def print_line(n = 50):
     print(f"-" * n)
@@ -262,6 +286,39 @@ def parse_ibrecords(data_array):
         data_list.append(data)
 
     return data_list
+
+
+def monitor_overview(duration=5):
+    executions = []
+    positions = []
+    open_orders = []
+    
+    while ib.sleep(duration):        
+        print_clear()
+        print(f"-" * 50)
+
+        print_account_summary(accounts = ["U10394496"])
+        print(f"-" * 50)
+
+        current_executions = print_executions()
+        print(f"-" * 50)
+
+        if len(current_executions) != len(executions):
+            alert()        
+
+        current_open_orders = print_openOrders()
+        print(f"-" * 50)
+
+        current_positions = print_positions(contract=NQM4)
+        print(f"-" * 50)
+        
+        print_orderbook()
+        print(f"-" * 50)
+
+        executions = current_executions
+        open_orders = current_open_orders
+        positions = current_positions
+
 
 
 
