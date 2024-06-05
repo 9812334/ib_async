@@ -10,7 +10,75 @@ import sys
 
 from ib_async import *
 
-from alerts import *
+import platform
+import chime
+import datetime
+import os
+
+import urllib
+
+def chime_success():
+    if platform.system() == "Linux":
+        chime.success()
+    elif platform.system() == "Darwin":
+        os.system("say beep")
+    elif platform.system() == "Windows":
+        raise Exception("not handled yet")
+    
+    return True
+
+
+
+def alert(success=True):
+    if platform.system() == "Linux":
+        if success:
+            chime.success()
+        else:
+            chime.warning()
+    elif platform.system() == "Darwin":
+        os.system("say beep")
+    elif platform.system() == "Windows":
+        raise Exception("not handled yet")
+    
+    return True
+
+
+def beep(alert = 0):
+    if platform.system() == "Linux":
+        if alert == 0:
+            chime.success()
+        else:
+            chime.warning()
+    elif platform.system() == "Darwin":
+        os.system("say beep")
+    elif platform.system() == "Windows":
+        raise Exception("not handled yet")
+    
+    return True
+
+def push_notifications(msg="Hello world!", push = True, alert = 0):
+    body = f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {msg}"
+    print(body)
+
+    if alert > 0:
+        beep(alert)
+    
+    if push:
+        try:
+            data = urllib.parse.urlencode({"text": body}).encode()
+            req = urllib.request.Request(
+                "https://api.chanify.net/v1/sender/CICswLUGEiJBQUZIR0pJQ0VVNkxUTlZCMk1DRElCWU1RSlNWMktCS0NFIgIIAQ.vj8gcfxM4jD9Zv0mBMSlFlY51EL_jC5dB8LWdWX1tAs",
+                data=data,
+            )
+            response = urllib.request.urlopen(req)
+            response.read()  # Read the response to ensure the request is complete
+        except urllib.error.URLError as e:
+            print(f"Error sending request: {e.reason}")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+        
+    return True
+
 
 
 util.logToFile(f"{datetime.datetime.now().strftime('%Y-%m-%d')}-{socket.gethostname()}.log")
@@ -22,7 +90,8 @@ if "ib" in globals():
 
 randint = lambda a=1, b=10: random.randint(a, b)
 ib = IB()
-ib.connect("127.0.0.1", 4001, randint(1, 99))
+# ib.connect("127.0.0.1", 4001, randint(1, 99))
+ib.connect("192.168.1.36", 4001, randint(1, 99))
 
 ib.reqAccountSummary() # run only once
 ib.reqAllOpenOrders()
@@ -132,43 +201,25 @@ def print_account_summary(accounts = ["U10394496", "U2340948"]):
             ]:
                 print(item.tag, item.value)
 
-def print_executions():
-    executions = ib.executions()
-    print(f"Intraday Executions: {len(executions)}")
+def print_executions(cols = ["time", "side", "price", "permId", "shares"], tail = 5):
+    executions_df = util.df(ib.executions())
+    
+    print(f"Executions: {len(executions_df)}")
+    
+    if len(executions_df) > 0:
+        print(executions_df[cols].tail(tail))
 
-    if len(executions) > 0:
-        print(
-            util.df(ib.executions()).tail().loc[
-                :, ["time", "side", "price", "permId", "shares"]
-            ]
-        )
+    return executions_df
 
-    return executions
+    
+def print_openOrders(cols = ["localSymbol", "permId", "action", "totalQuantity", "orderType", "lmtPrice", "tif", "status"]):
 
-
-def print_openOrders():
-    open_orders = ib.openOrders()
-    open_orders_df = util.df(open_orders).sort_values("lmtPrice", ascending=False).loc[
-                :,
-                [
-                    "orderId",
-                    "permId",
-                    "action",
-                    "totalQuantity",
-                    "orderType",
-                    "lmtPrice",
-                    "tif",
-                ],
-            ]
-
+    open_orders_df = util.df(parse_ibrecords(ib.reqAllOpenOrders()))
+    
     print(f"Open Orders: {len(open_orders_df)}")
+    print(open_orders_df[cols])
 
-    if open_orders != []:
-        print(
-            open_orders_df
-        )
-       
-    return open_orders
+    return open_orders_df
 
 def print_openTrades():
     open_trades = ib.openTrades()
@@ -288,41 +339,9 @@ def parse_ibrecords(data_array):
     return data_list
 
 
-def monitor_overview(duration=5):
-    executions = []
-    positions = []
-    open_orders = []
-    
-    while ib.sleep(duration):        
-        print_clear()
-        print(f"-" * 50)
-
-        print_account_summary(accounts = ["U10394496"])
-        print(f"-" * 50)
-
-        current_executions = print_executions()
-        print(f"-" * 50)
-
-        if len(current_executions) != len(executions):
-            alert()        
-
-        current_open_orders = print_openOrders()
-        print(f"-" * 50)
-
-        current_positions = print_positions(contract=NQM4)
-        print(f"-" * 50)
-        
-        print_orderbook()
-        print(f"-" * 50)
-
-        executions = current_executions
-        open_orders = current_open_orders
-        positions = current_positions
 
 
-
-
-def parse_ibrecords(
+def print_ibrecords(
     data_array,
     cols,
 ):
