@@ -56,12 +56,14 @@ def beep(alert = 0):
     
     return True
 
-def push_notifications(msg="Hello world!", push = True, alert = 0):
+def push_notifications(msg="Hello world!", push = True, sound = 0):
     body = f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {msg}"
     print(body)
 
-    if alert > 0:
-        beep(alert)
+    if sound > 0:
+        beep(sound)
+    
+    # https://api.chanify.net/v1/sender/<token>?sound=1&priority=10&title=hello
     
     if push:
         try:
@@ -204,10 +206,11 @@ def print_account_summary(accounts = ["U10394496", "U2340948"]):
 def print_executions(cols = ["time", "side", "price", "permId", "shares"], tail = 5):
     executions_df = util.df(ib.executions())
     
-    print(f"Executions: {len(executions_df)}")
+    if executions_df is not None:
+        print(f"Executions: {len(executions_df)}")
     
-    if len(executions_df) > 0:
-        print(executions_df[cols].tail(tail))
+        if len(executions_df) > 0:
+            print(executions_df[cols].tail(tail))
 
     return executions_df
 

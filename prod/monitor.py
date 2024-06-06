@@ -44,8 +44,8 @@ def monitor_overview(duration=5):
         current_executions = print_executions()
         print(f"-" * 50)
 
-        if len(current_executions) != len(executions):
-            alert()        
+        # if len(current_executions) != len(executions):
+        #     alert()        
 
         current_open_orders = print_openOrders()
         
