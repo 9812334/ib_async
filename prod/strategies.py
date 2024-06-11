@@ -249,7 +249,7 @@ BUY_SCALP = {
     "open_type": "LIMIT",
     "open_action": "BUY",
     "open_ref": "ask",
-    "open_ticks": -15,
+    "open_ticks": -10,
     "close_qty": 1,
     "close_type": "LIMIT",
     "close_action": "SELL",
