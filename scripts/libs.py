@@ -15,6 +15,23 @@ import os
 
 import urllib
 
+
+from functools import wraps
+import time
+
+
+def timing_decorator(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        print(f"Function {func.__name__} took {end_time - start_time:.2f} seconds")
+        return result
+
+    return wrapper
+
+
 def chime_success():
     if platform.system() == "Linux":
         chime.success()
@@ -24,7 +41,6 @@ def chime_success():
         raise Exception("not handled yet")
     
     return True
-
 
 
 def alert(success=True):
@@ -76,7 +92,6 @@ def push_notifications(msg="Hello world!", push = True, alert = 0):
             print(f"An unexpected error occurred: {e}")
         
     return True
-
 
 
 from ib_async import *
@@ -152,6 +167,7 @@ OPEN_TRADE_COLS = [
     "totalQuantity",
     "remaining",
 ]
+
 
 def get_trade_by_permid(permid):
     return next((trade for trade in ib.trades() if trade.order.permId == permid), None)
@@ -277,7 +293,6 @@ def print_order(o):
     )
 
 
-
 def print_positions(contract = None, header = True):
     if header:
         print(f"Positions: ")
@@ -324,7 +339,6 @@ def monitor_overview(duration=5):
         executions = current_executions
         open_orders = current_open_orders
         positions = current_positions
-
 
 
 def parse_ibrecords(data_array):
@@ -385,7 +399,6 @@ def print_ibrecords(
     print(df)
 
 
-
 if __name__ == "__main__":
     print_clear()
     print_account_summary()
@@ -394,4 +407,3 @@ if __name__ == "__main__":
     print_openTrades()
     print_positions()
     print_orderbook()
-
