@@ -255,7 +255,7 @@ BUY_SCALP = {
     "close_action": "SELL",
     "close_ref": "open_fill",
     "close_ticks": 10,
-    "pause_seconds": 90,
+    "pause_seconds": 40,
 }
 
 
