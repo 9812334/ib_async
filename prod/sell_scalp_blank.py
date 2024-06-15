@@ -1,40 +1,5 @@
 from strat import *
 
-SELL_SCALP = {
-    "strategy": "SELL TO OPEN SCALP",
-    "contract": "NQM2024",
-    "tick_increment": 0.25,
-    "open_qty": 1,
-    "open_type": "LIMIT",
-    "open_action": "SELL",
-    "open_ref": "ask",
-    "open_ticks": 15,
-    "close_qty": 1,
-    "close_type": "LIMIT",
-    "close_action": "BUY",
-    "close_ref": "open_fill",
-    "close_ticks": -10,
-    "pause_seconds": 60,
-}
-
-BUY_SCALP = {
-    "strategy": "BUY TO OPEN SCALP",
-    "contract": "NQM2024",
-    "tick_increment": 0.25,
-    "open_qty": 1,
-    "open_type": "LIMIT",
-    "open_action": "BUY",
-    "open_ref": "ask",
-    "open_ticks": -5,
-    "close_qty": 1,
-    "close_type": "LIMIT",
-    "close_action": "SELL",
-    "close_ref": "open_fill",
-    "close_ticks": 10,
-    "pause_seconds": 40,
-}
-
-
 DEBUG = False
 LIVE = True
 

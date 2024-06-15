@@ -16,12 +16,11 @@ def run_ss_2(strategy_details, open_permid = None, close_permid = None, push = F
 
         return open_trade, close_trade
 
-
     def print_summary():
         print_clear()
         print(f"------- {strategy_details['strategy']} / {strategy_details['open_ticks']}:{strategy_details['close_ticks']} / {strategy_details['pause_seconds']} seconds -------")
         print_line()
-        
+
         if open_trade is not None:
             print_order(open_trade)
         else:
@@ -35,8 +34,10 @@ def run_ss_2(strategy_details, open_permid = None, close_permid = None, push = F
         print_line()
 
         print_line()
-        print_orderbook()
+        print_orderbook(ticker=ticker)
         print_line()
+
+    ticker, contract = ticker_init(local_symbol =strategy_details["contract"])
 
     open_trade, close_trade = get_open_close_trades(open_permid, close_permid)
     close_order_timestamp = None
@@ -49,7 +50,7 @@ def run_ss_2(strategy_details, open_permid = None, close_permid = None, push = F
         if close_order_timestamp is not None and (datetime.datetime.now() - close_order_timestamp < datetime.timedelta(seconds=strategy_details["pause_seconds"])):
             print(f'Waiting {strategy_details["pause_seconds"] - (datetime.datetime.now() - close_order_timestamp).seconds} seconds...')
             continue
-            
+
         if DEBUG:
             proceed = input("Proceed? ")
 
@@ -94,7 +95,7 @@ def run_ss_2(strategy_details, open_permid = None, close_permid = None, push = F
             print(f"Placing order for open_trade {open_order} ")
 
             if LIVE:
-                open_trade = ib.placeOrder(NQM4, open_order)
+                open_trade = ib.placeOrder(contract, open_order)
                 ib.sleep(1)
                 open_order_timestamp = datetime.datetime.now()
 
@@ -143,11 +144,11 @@ def run_ss_2(strategy_details, open_permid = None, close_permid = None, push = F
                     print(f"Modifying order: {open_trade.order}")
 
                     if LIVE:
-                        open_trade = ib.placeOrder(NQM4, open_trade.order)
+                        open_trade = ib.placeOrder(contract, open_trade.order)
                         push_notifications(f"MODIFIED ORDER PLACED:: {open_trade.order}", push)
                     else:
                         print(f"[NOT LIVE] MODIFIED ORDER PLACED:: {open_trade.order}")
-                        
+
                     open_order_timestamp = datetime.datetime.now()
 
             elif open_trade.orderStatus.status == "Filled" and close_trade is None:
@@ -188,7 +189,7 @@ def run_ss_2(strategy_details, open_permid = None, close_permid = None, push = F
                 print(f"Placing close_order {close_order}")
 
                 if LIVE:
-                    close_trade = ib.placeOrder(NQM4, close_order)
+                    close_trade = ib.placeOrder(contract, close_order)
                     ib.sleep(1)
                     push_notifications(f"OPEN ORDER FILLED:: {open_trade.order}", push)
                     push_notifications(f"CLOSE ORDER PLACED:: {close_trade.order}", push)
@@ -226,13 +227,13 @@ def run_ss_2(strategy_details, open_permid = None, close_permid = None, push = F
 
 SELL_SCALP = {
     "strategy": "SELL TO OPEN SCALP",
-    "contract": "NQM2024",
+    "contract": "NQU2024",
     "tick_increment": 0.25,
     "open_qty": 1,
     "open_type": "LIMIT",
     "open_action": "SELL",
     "open_ref": "ask",
-    "open_ticks": 15,
+    "open_ticks": 5,
     "close_qty": 1,
     "close_type": "LIMIT",
     "close_action": "BUY",
@@ -243,7 +244,7 @@ SELL_SCALP = {
 
 BUY_SCALP = {
     "strategy": "BUY TO OPEN SCALP",
-    "contract": "NQM2024",
+    "contract": "NQU2024",
     "tick_increment": 0.25,
     "open_qty": 1,
     "open_type": "LIMIT",
@@ -258,7 +259,5 @@ BUY_SCALP = {
     "pause_seconds": 40,
 }
 
-
 DEBUG = False
 LIVE = True
-

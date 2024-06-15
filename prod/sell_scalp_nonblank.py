@@ -7,14 +7,14 @@ SELL_SCALP = {
     "open_qty": 1,
     "open_type": "LIMIT",
     "open_action": "SELL",
-    "open_ref": "ask",
+    "open_ref": "bid",
     "open_ticks": 15,
     "close_qty": 1,
     "close_type": "LIMIT",
     "close_action": "BUY",
     "close_ref": "open_fill",
     "close_ticks": -10,
-    "pause_seconds": 60,
+    "pause_seconds": 120,
 }
 
 BUY_SCALP = {

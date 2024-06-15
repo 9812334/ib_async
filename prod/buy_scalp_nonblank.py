@@ -25,13 +25,13 @@ BUY_SCALP = {
     "open_type": "LIMIT",
     "open_action": "BUY",
     "open_ref": "ask",
-    "open_ticks": -15,
+    "open_ticks": -10,
     "close_qty": 1,
     "close_type": "LIMIT",
     "close_action": "SELL",
     "close_ref": "open_fill",
     "close_ticks": 10,
-    "pause_seconds":120,
+    "pause_seconds":90,
 }
 
 
@@ -39,7 +39,7 @@ DEBUG = False
 LIVE = True
 
 if __name__ == "__main__":
-    open_permid = 696617735 # get_last_trade_permid(n=0)
+    open_permid = 1299477527 # get_last_trade_permid(n=0)
     close_permid = None # get_last_trade_permid()
     print(open_permid, ";", close_permid)
 

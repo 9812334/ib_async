@@ -28,36 +28,37 @@ parser.add_argument(
 args = parser.parse_args()
 
 
-
-def monitor_overview(duration=5):
+def monitor_overview(local_symbol, accounts = ["U10394496"], duration=5):
     executions = []
     positions = []
     open_orders = []
-    
+
+    ticker, contract = ticker_init(local_symbol= local_symbol)
+
     while ib.sleep(duration):        
         print_clear()
         print(f"-" * 50)
 
-        print_account_summary(accounts = ["U10394496"])
+        print_account_summary(accounts = accounts)
         print(f"-" * 50)
 
         current_executions = print_executions()
         print(f"-" * 50)
 
         # if len(current_executions) != len(executions):
-        #     alert()        
+        #     alert()
 
         current_open_orders = print_openOrders()
-        
+
         if len(current_open_orders) != len(open_orders):
             ib.reqExecutions()
-            
+
         print(f"-" * 50)
 
-        current_positions = print_positions(contract=NQM4)
+        current_positions = print_positions(contract=contract)
         print(f"-" * 50)
-        
-        print_orderbook()
+
+        print_orderbook(ticker=ticker)
         print(f"-" * 50)
 
         executions = current_executions
@@ -65,8 +66,6 @@ def monitor_overview(duration=5):
         positions = current_positions
 
 
-
 if __name__ == "__main__":
     print(args)
-    # ticker = ticker_init()
-    monitor_overview(duration=args.dur)
+    monitor_overview(local_symbol="NQU2024", duration=args.dur)

@@ -28,7 +28,6 @@ def chime_success():
     return True
 
 
-
 def alert(success=True):
     if platform.system() == "Linux":
         if success:
@@ -82,7 +81,6 @@ def push_notifications(msg="Hello world!", push = True, sound = 0):
     return True
 
 
-
 util.logToFile(f"{datetime.datetime.now().strftime('%Y-%m-%d')}-{socket.gethostname()}.log")
 util.startLoop()
 util.logToConsole()
@@ -95,14 +93,7 @@ ib = IB()
 # ib.connect("127.0.0.1", 4001, randint(1, 99))
 ib.connect("192.168.1.36", 4001, randint(1, 99))
 
-ib.reqAccountSummary() # run only once
-ib.reqAllOpenOrders()
-ib.reqPositions()
 
-
-NQM4 = Contract(conId=620730920)
-ib.qualifyContracts(NQM4)
-ticker = ib.reqMktDepth(contract=NQM4, isSmartDepth=True)
 
 ORDER_COLS = [
     "localSymbol",
@@ -153,6 +144,25 @@ OPEN_TRADE_COLS = [
     "totalQuantity",
     "remaining",
 ]
+
+
+def ticker_init(local_symbol):
+
+    if local_symbol == "NQM2024":
+        contract = Contract(conId=620730920)
+    elif local_symbol == "NQU2024":
+        contract = Contract(conId=637533450)
+    else:
+        raise Exception("Not implemented contract")
+
+    ib.qualifyContracts(contract)
+    ticker = ib.reqMktDepth(contract=contract, isSmartDepth=True)
+
+    ib.reqAccountSummary()  # run only once
+    ib.reqAllOpenOrders()
+    ib.reqPositions()
+
+    return ticker, contract
 
 def get_trade_by_permid(permid):
     return next((trade for trade in ib.trades() if trade.order.permId == permid), None)
@@ -214,7 +224,7 @@ def print_executions(cols = ["time", "side", "price", "permId", "shares"], tail 
 
     return executions_df
 
-    
+
 def print_openOrders(cols = ["localSymbol", "permId", "action", "totalQuantity", "orderType", "lmtPrice", "tif", "status"]):
 
     open_orders_df = util.df(parse_ibrecords(ib.reqAllOpenOrders()))
@@ -249,7 +259,7 @@ def print_openTrades():
     return open_trades
 
 
-def print_orderbook():
+def print_orderbook(ticker):
     if ticker is not None and ticker.domBids is not None and ticker.domAsks is not None:
         max_length = max(len(ticker.domBids), len(ticker.domAsks))
         for i in range(max_length):
@@ -274,7 +284,6 @@ def print_order(o):
     print(
         f"{contract.symbol}\t{order.permId}\t{orderStatus.status}\t{order.action}\t{orderStatus.filled}\t{orderStatus.remaining}\t\t{order.lmtPrice}\t"
     )
-
 
 
 def print_positions(contract = None, header = True):
@@ -342,8 +351,6 @@ def parse_ibrecords(data_array):
     return data_list
 
 
-
-
 def print_ibrecords(
     data_array,
     cols,
@@ -361,4 +368,3 @@ if __name__ == "__main__":
     print_openTrades()
     print_positions()
     print_orderbook()
-
