@@ -1,21 +1,16 @@
-import argparse
-import importlib
 import datetime
 import socket
-import random
 import datetime
 import os
 import pandas as pd
-import sys
-
-from ib_async import *
-
 import platform
 import chime
-import datetime
 import os
-
 import urllib
+
+from config import *
+from ib_async import *
+
 
 def chime_success():
     if platform.system() == "Linux":
@@ -67,8 +62,7 @@ def push_notifications(msg="Hello world!", push = True, sound = 0):
     if push:
         try:
             data = urllib.parse.urlencode({"text": body}).encode()
-            req = urllib.request.Request(
-                "https://api.chanify.net/v1/sender/CICswLUGEiJBQUZIR0pJQ0VVNkxUTlZCMk1DRElCWU1RSlNWMktCS0NFIgIIAQ.vj8gcfxM4jD9Zv0mBMSlFlY51EL_jC5dB8LWdWX1tAs",
+            req = urllib.request.Request(f"{CHANIFY_URL}{CHANIFY_TOKEN}",
                 data=data,
             )
             response = urllib.request.urlopen(req)
@@ -81,69 +75,30 @@ def push_notifications(msg="Hello world!", push = True, sound = 0):
     return True
 
 
-util.logToFile(f"{datetime.datetime.now().strftime('%Y-%m-%d')}-{socket.gethostname()}.log")
+util.logToFile(f"{LOGS_DIR}/{datetime.datetime.now().strftime('%Y-%m-%d')}-{socket.gethostname()}.log")
 util.startLoop()
 util.logToConsole()
 
 if "ib" in globals():
     ib.disconnect()
 
-randint = lambda a=1, b=10: random.randint(a, b)
+
 ib = IB()
-# ib.connect("127.0.0.1", 4001, randint(1, 99))
-ib.connect("192.168.1.36", 4001, randint(1, 99))
+ib.connect(IBKR_SERVER, IBKR_PORT, CLIENT_ID)
 
 
+def ticker_contract_init(contract_id):
 
-ORDER_COLS = [
-    "localSymbol",
-    "permId",
-    "status",
-    "orderType",
-    "action",
-    "lmtPrice",
-    "remaining",
-]
+    contract = Contract(conId=contract_id)
 
-TRADE_COLS = [
-    "permId",
-    "clientId",
-    "localSymbol",
-    "status",
-    "orderType",
-    "action",
-    "lmtPrice",
-    "remaining",
-    "filledQuantity",
-    "fills",
-]
+    ib.qualifyContracts(contract)
+    ticker = ib.reqMktDepth(contract=contract, isSmartDepth=True)
 
-# OPEN_TRADE_COLS = [
-#     "permId",
-#     "orderId",
-#     "symbol",
-#     "lastTradeDateOrContractMonth",
-#     "orderType",
-#     "action",
-#     "lmtPrice",
-#     "totalQuantity",
-#     "remaining",
-#     "fills",
-#     "log",
-# ]
+    ib.reqAccountSummary()  # run only once
+    ib.reqAllOpenOrders()
+    ib.reqPositions()
 
-
-OPEN_TRADE_COLS = [
-    "permId",
-    "orderId",
-    "symbol",
-    "lastTradeDateOrContractMonth",
-    "orderType",
-    "action",
-    "lmtPrice",
-    "totalQuantity",
-    "remaining",
-]
+    return ticker, contract
 
 
 def ticker_init(local_symbol):
@@ -198,7 +153,8 @@ def print_line(n = 50):
 def print_clear():
     os.system("cls" if os.name == "nt" else "clear")
 
-def print_account_summary(accounts = ["U10394496", "U2340948"]):
+
+def print_account_summary(accounts=[IBKR_ACCOUNT_2, IBKR_ACCOUNT_1]):
 
     for account in accounts:
         print(f"Account: {account}")
@@ -209,20 +165,50 @@ def print_account_summary(accounts = ["U10394496", "U2340948"]):
                 "Cushion",
                 "NetLiquidation",
                 "TotalCashValue",
+                "ExcessLiquidity",
+                "BuyingPower",
                 "LookAheadExcessLiquidity",
+                "InitMarginReq",
+                "MaintMarginReq",
             ]:
                 print(item.tag, item.value)
 
+
 def print_executions(cols = ["time", "side", "price", "permId", "shares"], tail = 5):
     executions_df = util.df(ib.executions())
-    
-    if executions_df is not None:
+
+    if executions_df is None:
+        print(f"Executions: 0")
+    else:
         print(f"Executions: {len(executions_df)}")
-    
+
         if len(executions_df) > 0:
             print(executions_df[cols].tail(tail))
 
     return executions_df
+
+def print_strategy_summary(strategy_details, open_trade, close_trade, ticker = None):
+    print_clear()
+    print(
+        f"------- {strategy_details['strategy']} / {strategy_details['open_ticks']}:{strategy_details['close_ticks']} tickers / ({strategy_details['pause_replace']}_replace_sec)({strategy_details['pause_restart']}_restart_sec) -------"
+    )
+    print_line()
+
+    if open_trade is not None:
+        print_order(open_trade)
+    else:
+        print("Open Trade = None")
+    print_line()
+
+    if close_trade is not None:
+        print_order(close_trade)
+    else:
+        print("Close Trade = None")
+    print_line()
+
+    print_line()
+    print_orderbook(ticker=ticker)
+    print_line()
 
 
 def print_openOrders(cols = ["localSymbol", "permId", "action", "totalQuantity", "orderType", "lmtPrice", "tif", "status"]):
@@ -260,7 +246,12 @@ def print_openTrades():
 
 
 def print_orderbook(ticker):
-    if ticker is not None and ticker.domBids is not None and ticker.domAsks is not None:
+    if ticker is None:
+        return None
+    
+    print(f"Orderbook: {ticker.contract.localSymbol}")
+
+    if ticker.domBids is not None and ticker.domAsks is not None:
         max_length = max(len(ticker.domBids), len(ticker.domAsks))
         for i in range(max_length):
             bid_size = ticker.domBids[i].size if i < len(ticker.domBids) else "-"
@@ -297,7 +288,7 @@ def print_positions(contract = None, header = True):
 
     for f in positions:
         print(
-            f"{f.contract.symbol}\t{f.position} @ {f.avgCost/round(float(f.contract.multiplier or 1),2)}"
+            f"{f.contract.localSymbol}\t{f.position} @ {round(f.avgCost/float(f.contract.multiplier or 1),3)}"
         )
 
     return util.df([p for p in positions])
@@ -350,6 +341,21 @@ def parse_ibrecords(data_array):
 
     return data_list
 
+def test_tools(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
+    ticker, contract = ticker_init(local_symbol=local_symbol)
+    print_clear()
+    print_account_summary(accounts = accounts)
+    print()
+    print_executions()
+    print()
+    print_openOrders()
+    print()
+    print_openTrades()
+    print()
+    print_orderbook(ticker=ticker)
+    print()
+    print_positions()
+
 
 def print_ibrecords(
     data_array,
@@ -361,10 +367,4 @@ def print_ibrecords(
 
 
 if __name__ == "__main__":
-    print_clear()
-    print_account_summary()
-    print_executions()
-    print_openOrders()
-    print_openTrades()
-    print_positions()
-    print_orderbook()
+    test_tools("NQU2024")

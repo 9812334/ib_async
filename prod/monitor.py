@@ -1,5 +1,7 @@
 from tools import *
 
+import argparse
+
 parser = argparse.ArgumentParser(description="IBKR Script")
 parser.add_argument(
     "--dur",
@@ -7,28 +9,11 @@ parser.add_argument(
     default=1,
     help="Duration for monitoring overview (in seconds)",
 )
-parser.add_argument(
-    "--strat",
-    type=str,
-    choices=["ss_buy", "ss_sell", "monitor"],
-    help="Strategy details: 1) ss_buy, 2) ss_sell, 3) monitor",
-)
-parser.add_argument(
-    "--open",
-    type=int,
-    help="Open permId",
-    default=None
-)
-parser.add_argument(
-    "--close",
-    type=int,
-    help="Close permId",
-    default=None,
-)
+
 args = parser.parse_args()
 
 
-def monitor_overview(local_symbol, accounts = ["U10394496"], duration=5):
+def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
     executions = []
     positions = []
     open_orders = []
