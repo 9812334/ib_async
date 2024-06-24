@@ -35,7 +35,7 @@ def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
 
         current_open_orders = print_openOrders()
 
-        if len(current_open_orders) != len(open_orders):
+        if current_open_orders is not None and open_orders is not None and len(current_open_orders) != len(open_orders):
             ib.reqExecutions()
 
         print(f"-" * 50)

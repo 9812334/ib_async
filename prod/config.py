@@ -32,14 +32,14 @@ SELL_SCALP = {
     "open_type": "LIMIT",
     "open_action": "SELL",
     "open_ref": "ask",
-    "open_ticks": 5,
+    "open_ticks": 15,
     "close_qty": 1,
     "close_type": "LIMIT",
     "close_action": "BUY",
     "close_ref": "open_fill",
     "close_ticks": -10,
-    "pause_replace": 40,
-    "pause_restart": 10,
+    "pause_replace": 25,
+    "pause_restart": 70
 }
 
 BUY_SCALP = {
@@ -51,28 +51,28 @@ BUY_SCALP = {
     "close_push": True,
     "strategy": "BUY TO OPEN SCALP",
     "contract": "NQU2024",
-    "contract_id": 637533450,
+    "contract_id": None,
     "tick_increment": 0.25,
-    "open_permid": 519029452,
-    "close_permid": 519029476,
+    "open_permid": None,
+    "close_permid": None,
     "open_qty": 1,
     "open_type": "LIMIT",
     "open_action": "BUY",
     "open_ref": "ask",
-    "open_ticks": -5,
+    "open_ticks": -10,
     "close_qty": 1,
     "close_type": "LIMIT",
     "close_action": "SELL",
     "close_ref": "open_fill",
     "close_ticks": 10,
-    "pause_replace": 50,
-    "pause_restart": 20,
+    "pause_replace": 35,
+    "pause_restart": 60,
 }
 
 DEBUG = False
 LIVE = True
-STRATEGY = BUY_SCALP
-PUSH = True
+STRATEGY = SELL_SCALP
+PUSH = False
 
 
 ORDER_COLS = [

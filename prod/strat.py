@@ -24,7 +24,7 @@ def simple_scalp(strat):
     close_order_timestamp = None
     open_order_timestamp = None
 
-    while ib.sleep(1):
+    while ib.sleep(0.1):
 
         print_strategy_summary(strat, open_trade, close_trade, ticker)
 
@@ -103,7 +103,7 @@ def simple_scalp(strat):
 
                     if LIVE:
                         open_trade = ib.placeOrder(contract, open_order)
-                        ib.sleep(1)
+                        ib.sleep(0.1)
                         open_order_timestamp = datetime.datetime.now()
 
                         trade = open_trade
@@ -217,7 +217,7 @@ def simple_scalp(strat):
 
                 if LIVE:
                     close_trade = ib.placeOrder(contract, close_order)
-                    ib.sleep(1)
+                    ib.sleep(0.1)
 
                     # delay push until later for speed
                     push_notifications(f"OPEN ORDER FILLED:: {open_trade.order}", strat["open_push"])
@@ -251,7 +251,7 @@ def simple_scalp(strat):
                 push_notifications(f"CLOSE TRADE CANCELLED:: {close_trade.order}", strat["close_push"])
                 close_trade = None
         
-        ib.reqAllOpenOrders()
+        # ib.reqAllOpenOrders()
         
 def test_simple_scalp():
     simple_scalp(STRATEGY)
