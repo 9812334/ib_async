@@ -30,8 +30,8 @@ def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
         current_executions = print_executions()
         print(f"-" * 50)
 
-        # if len(current_executions) != len(executions):
-        #     alert()
+        if current_executions is not None and executions is not None and len(current_executions) != len(executions):
+            alert()
 
         current_open_orders = print_openOrders()
 

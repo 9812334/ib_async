@@ -7,6 +7,8 @@ import platform
 import chime
 import os
 import urllib
+import pprint
+import argparse
 
 from config import *
 from ib_async import *
@@ -397,5 +399,3 @@ if __name__ == "__main__":
 
         print("Exiting...")
         exit(0)
-
-    

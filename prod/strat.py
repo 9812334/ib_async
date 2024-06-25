@@ -1,5 +1,64 @@
 from tools import *
 
+
+BUY_SCALP = {
+    "margin_cushion_pct": 5,
+    "account": IBKR_ACCOUNT_1,
+    "push": True,
+    "open_push": True,
+    "modify_push": False,
+    "close_push": True,
+    "strategy": "BUY TO OPEN SCALP",
+    "contract": "NQU2024",
+    "contract_id": None,
+    "tick_increment": 0.25,
+    "open_qty": 1,
+    "open_type": "LIMIT",
+    "open_action": "BUY",
+    "open_ref": "bid",
+    "close_qty": 1,
+    "close_type": "LIMIT",
+    "close_action": "SELL",
+    "close_ref": "open_fill",
+    "open_ticks": -4,
+    "close_ticks": 10,
+    "pause_replace": 30,
+    "pause_restart": 25,
+}
+
+SELL_SCALP = {
+    "margin_cushion_pct": 0,
+    "account": IBKR_ACCOUNT_1,
+    "push": True,
+    "open_push": True,
+    "modify_push": True,
+    "close_push": True,
+    "strategy": "SELL TO OPEN SCALP",
+    "contract": "NQU2024",
+    "contract_id": 637533450,
+    "tick_increment": 0.25,
+    "open_qty": 1,
+    "open_type": "LIMIT",
+    "open_action": "SELL",
+    "open_ref": "ask",
+    "open_ticks": 5,
+    "close_ticks": -10,
+    "close_qty": 1,
+    "close_type": "LIMIT",
+    "close_action": "BUY",
+    "close_ref": "open_fill",
+    "open_permid": None,
+    "close_permid": None,
+    "cancel_permid": None,
+    "pause_replace": 25,
+    "pause_restart": 25,
+}
+
+
+def refresh():
+    ib.reqAllOpenOrders()
+    ib.reqPositions()
+
 def simple_scalp(strat):
 
     def get_open_close_trades(open_permid, close_permid, push):
@@ -34,7 +93,7 @@ def simple_scalp(strat):
             )
             continue
 
-        if DEBUG:
+        if strat["debug"]:
             proceed = input("Proceed? ")
 
             if proceed.lower() != "y":
@@ -101,7 +160,7 @@ def simple_scalp(strat):
                     open_order_state.maintMarginAfter
                 ):
 
-                    if LIVE:
+                    if strat["live"]:
                         open_trade = ib.placeOrder(contract, open_order)
                         ib.sleep(0.1)
                         open_order_timestamp = datetime.datetime.now()
@@ -125,15 +184,12 @@ def simple_scalp(strat):
             if (
                 open_trade.orderStatus.status == "Inactive"
                 or open_trade.orderStatus.status == "Cancelled"
-            ):                
+            ):
                 print(f"OPEN TRADE STATUS CANCELLED:: {open_trade.order}", strat["open_push"])
 
                 for trade_entry in open_trade.log:
-                    if trade_entry.status == "Cancelled" or trade_entry.message != "":
+                    if trade_entry.status == "Cancelled":
                         push_notifications(f"{trade_entry}", strat["open_push"])
-                        print(f"Waiting for 200 seconds to resubmit... ")
-                        ib.sleep(200)
-                
                 open_trade = None
 
             elif open_trade.orderStatus.status == "Submitted" and close_trade is None:
@@ -170,7 +226,7 @@ def simple_scalp(strat):
 
                         print(f"Modifying open_trade order: {open_trade.order}")
 
-                        if LIVE:
+                        if strat["live"]:
                             open_trade = ib.placeOrder(contract, open_trade.order)
                             push_notifications(f"MODIFIED ORDER PLACED:: {open_trade.order}", strat["modify_push"])
                         else:
@@ -215,7 +271,7 @@ def simple_scalp(strat):
 
                 print(f"Placing close_order {close_order}")
 
-                if LIVE:
+                if strat["live"]:
                     close_trade = ib.placeOrder(contract, close_order)
                     ib.sleep(0.1)
 
@@ -227,8 +283,7 @@ def simple_scalp(strat):
                     print(f"[NOT LIVE] CLOSE ORDER PLACED:: {close_order}")
                     # print(f"CLOSE ORDER PLACED:: {close_trade.order}")
 
-                ib.reqAllOpenOrders()
-                ib.reqPositions()
+                refresh()
 
         if close_trade is not None:
             if close_trade.orderStatus.status == "Filled":
@@ -242,24 +297,12 @@ def simple_scalp(strat):
                 open_trade = None
                 close_trade = None
 
-                ib.reqAllOpenOrders()
-                ib.reqPositions()
+                refresh()
+
             elif (
                 close_trade.orderStatus.status == "Inactive"
                 or close_trade.orderStatus.status == "Cancelled"
             ):                
                 push_notifications(f"CLOSE TRADE CANCELLED:: {close_trade.order}", strat["close_push"])
                 close_trade = None
-        
-        # ib.reqAllOpenOrders()
-
-
-if __name__ == "__main__":
-    try:
-        simple_scalp(STRATEGY)
-
-    except KeyboardInterrupt:
-        ib.disconnect()
-
-        print("Exiting...")
-        exit(0)
+                refresh()
