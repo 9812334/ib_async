@@ -252,9 +252,14 @@ def simple_scalp(strat):
                 close_trade = None
         
         # ib.reqAllOpenOrders()
-        
-def test_simple_scalp():
-    simple_scalp(STRATEGY)
+
 
 if __name__ == "__main__":
-    test_simple_scalp()
+    try:
+        simple_scalp(STRATEGY)
+
+    except KeyboardInterrupt:
+        ib.disconnect()
+
+        print("Exiting...")
+        exit(0)

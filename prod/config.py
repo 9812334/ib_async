@@ -13,7 +13,7 @@ IBKR_SERVER = "192.168.1.36"  # "127.0.0.1"
 IBKR_PORT = 4001
 
 import random
-CLIENT_ID = random.randint(1, 99)
+CLIENT_ID = random.randint(1, 999)
 
 SELL_SCALP = {
     "margin_cushion_pct": 0,
@@ -32,14 +32,14 @@ SELL_SCALP = {
     "open_type": "LIMIT",
     "open_action": "SELL",
     "open_ref": "ask",
-    "open_ticks": 15,
+    "open_ticks": 5,
     "close_qty": 1,
     "close_type": "LIMIT",
     "close_action": "BUY",
     "close_ref": "open_fill",
     "close_ticks": -10,
     "pause_replace": 25,
-    "pause_restart": 70
+    "pause_restart": 0
 }
 
 BUY_SCALP = {
@@ -53,25 +53,25 @@ BUY_SCALP = {
     "contract": "NQU2024",
     "contract_id": None,
     "tick_increment": 0.25,
-    "open_permid": None,
+    "open_permid": 266989897,
     "close_permid": None,
     "open_qty": 1,
     "open_type": "LIMIT",
     "open_action": "BUY",
-    "open_ref": "ask",
-    "open_ticks": -10,
+    "open_ref": "bid",
+    "open_ticks": 1,
     "close_qty": 1,
     "close_type": "LIMIT",
     "close_action": "SELL",
     "close_ref": "open_fill",
     "close_ticks": 10,
-    "pause_replace": 35,
-    "pause_restart": 60,
+    "pause_replace": 30,
+    "pause_restart": 10,
 }
 
 DEBUG = False
 LIVE = True
-STRATEGY = SELL_SCALP
+STRATEGY = BUY_SCALP
 PUSH = False
 
 

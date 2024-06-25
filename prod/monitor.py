@@ -53,4 +53,12 @@ def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
 
 if __name__ == "__main__":
     print(args)
-    monitor_overview(local_symbol="NQU2024", duration=args.dur)
+
+    try:
+        monitor_overview(local_symbol="NQU2024", duration=args.dur)
+
+    except KeyboardInterrupt:
+        ib.disconnect()
+
+        print("Exiting...")
+        exit(0)

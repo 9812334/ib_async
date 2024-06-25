@@ -164,6 +164,7 @@ def print_account_summary(accounts=[IBKR_ACCOUNT_2, IBKR_ACCOUNT_1]):
                 "Account",
                 "Cushion",
                 "NetLiquidation",
+                "GrossPositionValue"
                 "TotalCashValue",
                 "ExcessLiquidity",
                 "BuyingPower",
@@ -227,7 +228,11 @@ def print_openOrders(cols = ["localSymbol", "permId", "action", "totalQuantity",
 def print_openTrades():
     open_trades = ib.openTrades()
 
-    open_trades_df = util.df([t.order for t in ib.openTrades()]).loc[
+    if open_trades is None or open_trades == []:
+        print(f"Open Trades: 0")
+        return None
+
+    open_trades_df = util.df([t.order for t in open_trades]).loc[
         :,
         [
             "orderId",
@@ -251,18 +256,27 @@ def print_openTrades():
 
 def print_orderbook(ticker):
     if ticker is None:
+        print(f"Orderbook: <TICKER NOT FOUND>")
         return None
-    
-    print(f"Orderbook: {ticker.contract.localSymbol}")
 
     if ticker.domBids is not None and ticker.domAsks is not None:
         max_length = max(len(ticker.domBids), len(ticker.domAsks))
+
+        sum_bid_size = sum([b.size for b in ticker.domBids])
+        sum_ask_size = sum([a.size for a in ticker.domAsks])
+        print(
+            f"Orderbook: {ticker.contract.localSymbol} / {sum_bid_size} x | x {sum_ask_size}"
+        )
+
         for i in range(max_length):
             bid_size = ticker.domBids[i].size if i < len(ticker.domBids) else "-"
             bid_price = ticker.domBids[i].price if i < len(ticker.domBids) else "-"
             ask_price = ticker.domAsks[i].price if i < len(ticker.domAsks) else "-"
             ask_size = ticker.domAsks[i].size if i < len(ticker.domAsks) else "-"
             print(f"{bid_size:>8} {bid_price:>10} | {ask_price:<10} {ask_size:<8}")
+
+        # avg_bid_price = round(sum([b.price * b.size for b in ticker.domBids]) / sum_bid_size,1)
+        # avg_ask_price = sum([b.price * b.size for b in ticker.domAsks]) / sum_ask_size
 
 
 def print_order(o):
@@ -348,6 +362,8 @@ def parse_ibrecords(data_array):
 def test_tools(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
     ticker, contract = ticker_init(local_symbol=local_symbol)
     print_clear()
+    print()
+    print_orderbook(ticker=ticker)
     print_account_summary(accounts = accounts)
     print()
     print_executions()
@@ -359,6 +375,8 @@ def test_tools(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
     print_orderbook(ticker=ticker)
     print()
     print_positions()
+    print()
+    ib.disconnect()
 
 
 def print_ibrecords(
@@ -371,4 +389,13 @@ def print_ibrecords(
 
 
 if __name__ == "__main__":
-    test_tools("NQU2024")
+    try:
+        test_tools("NQU2024")
+
+    except KeyboardInterrupt:
+        ib.disconnect()
+
+        print("Exiting...")
+        exit(0)
+
+    
