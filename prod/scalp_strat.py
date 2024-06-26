@@ -5,7 +5,7 @@ import argparse
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='My Python Script')
-    parser.add_argument('--strat', type=str, help='Strategy', default='buy')
+    parser.add_argument('--strat', type=str, help='Strategy', default='sell')
     parser.add_argument('--open_id', type=int, help='Open ID', default=0)
     parser.add_argument('--close_id', type=int, help='Close ID', default=0)
     parser.add_argument('--cancel_id', type=int, help='Cancel ID', default=0)
@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    print(f'Strategy: {args.strat}')
+    print(f'STRATEGY: {args.strat}')
     print(f'OPEN ID: {args.open_id}')
     print(f'CLOSE ID: {args.close_id}')
     print(f'CANCEL ID: {args.cancel_id}')

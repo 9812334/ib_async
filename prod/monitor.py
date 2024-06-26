@@ -3,7 +3,7 @@ from tools import *
 import argparse
 import random
 
-parser = argparse.ArgumentParser(description="IBKR Script")
+parser = argparse.ArgumentParser(description="IBKR Monitor Script")
 parser.add_argument(
     "--dur",
     type=int,
@@ -49,6 +49,9 @@ def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
 
         if random.randint(0,5) == 3:
             ib.reqExecutions()
+            ib.reqPositions()
+            ib.reqAllOpenOrders()
+
 
 if __name__ == "__main__":
     try:
