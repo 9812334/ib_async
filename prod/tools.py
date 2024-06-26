@@ -13,6 +13,8 @@ import argparse
 from config import *
 from ib_async import *
 
+if platform.system() == "Windows":
+    import winsound
 
 def chime_success():
     if platform.system() == "Linux":
@@ -20,8 +22,10 @@ def chime_success():
     elif platform.system() == "Darwin":
         os.system("say beep")
     elif platform.system() == "Windows":
-        raise Exception("not handled yet")
-    
+        frequency = 2500  # Set Frequency To 2500 Hertz
+        duration = 100  # Set Duration To 1000 ms == 1 second
+        winsound.Beep(frequency, duration)
+        
     return True
 
 
@@ -34,8 +38,12 @@ def alert(success=True):
     elif platform.system() == "Darwin":
         os.system("say beep")
     elif platform.system() == "Windows":
-        raise Exception("not handled yet")
-    
+        frequency = 2500  # Set Frequency To 2500 Hertz
+        duration = 100  # Set Duration To 1000 ms == 1 second
+        winsound.Beep(frequency, duration)
+
+    return True
+
     return True
 
 
@@ -48,8 +56,12 @@ def beep(alert = 0):
     elif platform.system() == "Darwin":
         os.system("say beep")
     elif platform.system() == "Windows":
-        raise Exception("not handled yet")
-    
+        frequency = 2500  # Set Frequency To 2500 Hertz
+        duration = 100  # Set Duration To 1000 ms == 1 second
+        winsound.Beep(frequency, duration)
+
+    return True
+
     return True
 
 def push_notifications(msg="Hello world!", push = True, sound = 0):

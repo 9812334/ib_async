@@ -1,6 +1,7 @@
 from tools import *
 
 import argparse
+import random
 
 parser = argparse.ArgumentParser(description="IBKR Script")
 parser.add_argument(
@@ -34,10 +35,6 @@ def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
             alert()
 
         current_open_orders = print_openOrders()
-
-        if current_open_orders is not None and open_orders is not None and len(current_open_orders) != len(open_orders):
-            ib.reqExecutions()
-
         print(f"-" * 50)
 
         current_positions = print_positions(contract=contract)
@@ -50,15 +47,14 @@ def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
         open_orders = current_open_orders
         positions = current_positions
 
+        if random.randint(0,5) == 3:
+            ib.reqExecutions()
 
 if __name__ == "__main__":
-    print(args)
-
     try:
-        monitor_overview(local_symbol="NQU2024", duration=args.dur)
-
+        monitor_overview(local_symbol="NQU2024", duration=5)
     except KeyboardInterrupt:
-        ib.disconnect()
+        print("Interrupted by user")
 
-        print("Exiting...")
-        exit(0)
+    ib.disconnect()
+    exit(0)
