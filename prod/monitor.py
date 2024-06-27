@@ -13,6 +13,7 @@ parser.add_argument(
 
 args = parser.parse_args()
 
+import datetime
 
 def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
     executions = []
@@ -21,8 +22,19 @@ def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
 
     ticker, contract = ticker_init(local_symbol= local_symbol)
 
-    while ib.sleep(duration):        
+    # every 5 seconds reqExecutions()
+    t1 = datetime.datetime.now().timestamp()
+    now = datetime.datetime.now().timestamp()
+
+    while ib.waitOnUpdate():
         print_clear()
+        now = datetime.datetime.now().timestamp()
+        if now - t1 > datetime.timedelta(seconds=duration).total_seconds():
+            print(f"Time elapsed: {now - t1}")
+            ib.reqPositions()
+            ib.reqAllOpenOrders()
+            t1 = datetime.datetime.now().timestamp()
+
         print(f"-" * 50)
 
         print_account_summary(accounts = accounts)
@@ -46,11 +58,6 @@ def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
         executions = current_executions
         open_orders = current_open_orders
         positions = current_positions
-
-        if random.randint(0,5) == 3:
-            ib.reqExecutions()
-            ib.reqPositions()
-            ib.reqAllOpenOrders()
 
 
 if __name__ == "__main__":

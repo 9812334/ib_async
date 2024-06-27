@@ -13,6 +13,9 @@ import argparse
 from config import *
 from ib_async import *
 
+from urllib import request, parse
+
+
 if platform.system() == "Windows":
     import winsound
 
@@ -44,9 +47,6 @@ def alert(success=True):
 
     return True
 
-    return True
-
-
 def beep(alert = 0):
     if platform.system() == "Linux":
         if alert == 0:
@@ -62,31 +62,40 @@ def beep(alert = 0):
 
     return True
 
-    return True
-
-def push_notifications(msg="Hello world!", push = True, sound = 0):
+def push_notifications(msg="Hello world!", push = True):
     body = f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {msg}"
     print(body)
 
-    if sound > 0:
-        beep(sound)
-    
-    # https://api.chanify.net/v1/sender/<token>?sound=1&priority=10&title=hello
-    
     if push:
         try:
-            data = urllib.parse.urlencode({"text": body}).encode()
-            req = urllib.request.Request(f"{CHANIFY_URL}{CHANIFY_TOKEN}",
+            # body = f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {body}"
+            data = parse.urlencode({"text": body}).encode()
+            req = request.Request(
+                "https://api.chanify.net/v1/sender/CICswLUGEiJBQUZIR0pJQ0VVNkxUTlZCMk1DRElCWU1RSlNWMktCS0NFIgIIAQ.vj8gcfxM4jD9Zv0mBMSlFlY51EL_jC5dB8LWdWX1tAs",
                 data=data,
             )
-            response = urllib.request.urlopen(req)
-            response.read()  # Read the response to ensure the request is complete
+            request.urlopen(req)
         except urllib.error.URLError as e:
             print(f"Error sending request: {e.reason}")
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
-        
+
     return True
+
+
+def test_notifications(msg = 'Hello World!'):
+    body = 'Hello World!'
+    body = f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {body}"
+    data = parse.urlencode({"text": body}).encode()
+    req = request.Request(
+        "https://api.chanify.net/v1/sender/CICswLUGEiJBQUZIR0pJQ0VVNkxUTlZCMk1DRElCWU1RSlNWMktCS0NFIgIIAQ.vj8gcfxM4jD9Zv0mBMSlFlY51EL_jC5dB8LWdWX1tAs",
+        data=data,
+    )
+    request.urlopen(req)
+    print()
+
+
+push_notifications()
 
 
 util.logToFile(f"{LOGS_DIR}/{datetime.datetime.now().strftime('%Y-%m-%d')}-{socket.gethostname()}.log")
@@ -177,6 +186,7 @@ def print_account_summary(accounts=[IBKR_ACCOUNT_2, IBKR_ACCOUNT_1]):
             if item.tag in [
                 "Account",
                 "Cushion",
+                "AvailableFunds",
                 "NetLiquidation",
                 "GrossPositionValue"
                 "TotalCashValue",
@@ -201,6 +211,21 @@ def print_executions(cols = ["time", "side", "price", "permId", "shares"], tail 
             print(executions_df[cols].tail(tail))
 
     return executions_df
+
+def print_trades(tail = 5):
+    trades_df = util.df(ib.trades())
+
+    if trades_df is None:
+        print(f"Trades: 0")
+    else:
+        print(f"Trades: {len(trades_df)}")
+
+        for i in range(len(trades_df.tail(tail))):
+            t = trades_df.tail(tail).reset_index()
+            print(
+                f"{t.contract[i].localSymbol}\t{t.order[i].permId}\t{t.order[i].action}\t{trades_df.order[i].totalQuantity}\t{t.order[i].orderType}\t{t.order[i].lmtPrice} {t.order[i].tif}\t{t.orderStatus[i].status}"
+            )
+    return trades_df
 
 def print_strategy_summary(strategy_details, open_trade, close_trade, ticker = None):
     print_clear()
@@ -373,6 +398,7 @@ def parse_ibrecords(data_array):
 
     return data_list
 
+
 def test_tools(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
     ticker, contract = ticker_init(local_symbol=local_symbol)
     print_clear()
@@ -380,7 +406,7 @@ def test_tools(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
     print_orderbook(ticker=ticker)
     print_account_summary(accounts = accounts)
     print()
-    print_executions()
+    print_trades()
     print()
     print_openOrders()
     print()
