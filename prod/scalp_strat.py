@@ -83,7 +83,9 @@ def simple_scalp(strat):
             elif strat["open_ref"] == "mid":
                 price_ref = (ticker.domAsks[0].price + ticker.domBids[0].price) / 2
             else:
-                raise Exception("Not implemented")
+                print("************ Invalid open_ref *************** ")
+                ib.disconnect()
+                exit()
 
             limit_price = price_ref + strat["open_ticks"] * strat["tick_increment"]
 
@@ -261,7 +263,10 @@ def simple_scalp(strat):
                 elif strat["close_ref"] == "mid":
                     price_ref = (ticker.domAsks[0].price + ticker.domBids[0].price) / 2
                 else:
-                    raise Exception("Not implemented")
+                    print("************ Invalid close_ref *************** ")
+                    ib.disconnect()
+                    exit()
+
 
                 limit_price = price_ref + strat["close_ticks"] * strat["tick_increment"]
 
@@ -273,7 +278,9 @@ def simple_scalp(strat):
                         account=strat["account"],
                     )
                 else:
-                    raise Exception("Not implemented")
+                    print("************ Invalid close_type *************** ")
+                    ib.disconnect()
+                    exit()
 
                 print(f"Placing close_order {close_order}")
 
@@ -382,7 +389,7 @@ import argparse
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='My Python Script')
-    parser.add_argument('--strat', type=str, help='Strategy', default='buy')
+    parser.add_argument('--strat', type=str, help='Strategy', default='')
     parser.add_argument("--open_id", type=int, help="Open ID", default=0)
     parser.add_argument('--close_id', type=int, help='Close ID', default=0)
     parser.add_argument("--cancel_id", type=int, help="Cancel ID", default=0)

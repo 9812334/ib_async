@@ -19,19 +19,6 @@ from urllib import request, parse
 if platform.system() == "Windows":
     import winsound
 
-def chime_success():
-    if platform.system() == "Linux":
-        chime.success()
-    elif platform.system() == "Darwin":
-        os.system("say beep")
-    elif platform.system() == "Windows":
-        frequency = 2500  # Set Frequency To 2500 Hertz
-        duration = 100  # Set Duration To 1000 ms == 1 second
-        winsound.Beep(frequency, duration)
-        
-    return True
-
-
 def alert(success=True):
     if platform.system() == "Linux":
         if success:
@@ -47,20 +34,6 @@ def alert(success=True):
 
     return True
 
-def beep(alert = 0):
-    if platform.system() == "Linux":
-        if alert == 0:
-            chime.success()
-        else:
-            chime.warning()
-    elif platform.system() == "Darwin":
-        os.system("say beep")
-    elif platform.system() == "Windows":
-        frequency = 2500  # Set Frequency To 2500 Hertz
-        duration = 100  # Set Duration To 1000 ms == 1 second
-        winsound.Beep(frequency, duration)
-
-    return True
 
 def push_notifications(msg="Hello world!", push = True):
     body = f"[{datetime.datetime.now().strftime('%H:%M:%S')}] {msg}"
@@ -93,9 +66,6 @@ def test_notifications(msg = 'Hello World!'):
     )
     request.urlopen(req)
     print()
-
-
-push_notifications()
 
 
 util.logToFile(f"{LOGS_DIR}/{datetime.datetime.now().strftime('%Y-%m-%d')}-{socket.gethostname()}.log")
@@ -334,14 +304,14 @@ def print_order(o):
     )
 
 
-def print_positions(contract = None, header = True):
+def print_positions(contract = None, header = True, positions = ib.positions()):
     if header:
         print(f"Positions: ")
-        
+
     if contract:        
-        positions = [pos for pos in ib.positions() if pos.contract == contract]
+        positions = [pos for pos in positions if pos.contract == contract]
     else:
-        positions = [pos for pos in ib.positions()]
+        positions = [pos for pos in positions]
 
     for f in positions:
         print(
@@ -349,6 +319,7 @@ def print_positions(contract = None, header = True):
         )
 
     return util.df([p for p in positions])
+    # return positions
 
 def parse_ibrecords(data_array):
 
