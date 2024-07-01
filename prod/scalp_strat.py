@@ -1,48 +1,6 @@
 from tools import *
 
 
-BUY_SCALP = {
-    "margin_cushion_pct": 5,
-    "account": IBKR_ACCOUNT_1,
-    "strategy": "BUY TO OPEN SCALP",
-    "contract": "NQU2024",
-    "contract_id": None,
-    "tick_increment": 0.25,
-    "open_qty": 1,
-    "open_type": "LIMIT",
-    "open_action": "BUY",
-    "open_ref": "bid",
-    "close_qty": 1,
-    "close_type": "LIMIT",
-    "close_action": "SELL",
-    "close_ref": "open_fill",
-    "open_ticks": -4,
-    "close_ticks": 10,
-}
-
-SELL_SCALP = {
-    "margin_cushion_pct": 0,
-    "account": IBKR_ACCOUNT_1,
-    "strategy": "SELL TO OPEN SCALP",
-    "contract": "NQU2024",
-    "contract_id": 637533450,
-    "tick_increment": 0.25,
-    "open_qty": 1,
-    "open_type": "LIMIT",
-    "open_action": "SELL",
-    "open_ref": "ask",
-    "open_ticks": 5,
-    "close_ticks": -10,
-    "close_qty": 1,
-    "close_type": "LIMIT",
-    "close_action": "BUY",
-    "close_ref": "open_fill",
-    "open_permid": None,
-    "close_permid": None,
-    "cancel_permid": None
-}
-
-
 def refresh():
     ib.reqAllOpenOrders()
     ib.reqPositions()
@@ -129,6 +87,20 @@ def simple_scalp(strat):
 
             limit_price = price_ref + strat["open_ticks"] * strat["tick_increment"]
 
+            # open trade checks
+            if limit_price > strat["open_max"]:
+                print(f"************ Limit price {limit_price} > {strat['open_max']} ***************")
+                print(f"Sleeping 5 seconds")
+                ib.sleep(5)
+                continue
+            elif limit_price < strat["open_min"]:
+                print(f"************ Limit price {limit_price} < {strat['open_min']} ***************")
+                print(f"Sleeping 5 seconds")
+                ib.sleep(5)
+                continue
+            else:
+                print(f"Pre-submitting order for open_trade limit price {limit_price}")
+
             if strat["open_type"] == "LIMIT":
                 open_order = LimitOrder(
                     action=action,
@@ -139,8 +111,6 @@ def simple_scalp(strat):
             else:
                 raise Exception("Not implemented")
 
-            print(f"Pre-submitting order for open_trade {open_order} ")
-
             open_order_state = ib.whatIfOrder(contract, open_order)
 
             print(f"Order state: {open_order_state}")
@@ -149,9 +119,6 @@ def simple_scalp(strat):
                 raise Exception(
                     f"************ Issue placing whatIfOrder *************** "
                 )
-                alert(True)
-                ib.waitOnUpdate()
-                continue
             else:
                 accountSummary = util.df(ib.accountSummary(account=strat["account"]))
 
@@ -191,9 +158,9 @@ def simple_scalp(strat):
 
                     if strat['margin_check']:
                         alert(False)
+                        print("Retrying in 25 seconds...")
                         ib.sleep(25)
                         continue
-                    
 
         if open_trade is not None:
             if (
@@ -221,8 +188,7 @@ def simple_scalp(strat):
                     > datetime.timedelta(seconds=strat["pause_replace"])
                 ):
                     print(
-                        f"OPEN Trade submitted, but not filled. Modifying order limit price: {open_trade.order.lmtPrice}"
-                    )
+                        f"OPEN Trade submitted, but not filled")
 
                     # find the price of opening the trade
                     if strat["open_ref"] == "bid":
@@ -239,6 +205,20 @@ def simple_scalp(strat):
                     limit_price = (
                         price_ref + strat["open_ticks"] * strat["tick_increment"]
                     )
+
+                    # open/modify trade checks
+                    if limit_price > strat["open_max"]:
+                        print(f"************ Limit price {limit_price} > {strat['open_max']} ***************")
+                        print(f"Sleeping 5 seconds")
+                        ib.sleep(5)
+                        continue
+                    elif limit_price < strat["open_min"]:
+                        print(f"************ Limit price {limit_price} < {strat['open_min']} ***************")
+                        print(f"Sleeping 5 seconds")
+                        ib.sleep(5)
+                        continue
+                    else:
+                        print(f"Modifying order limit price: {open_trade.order.lmtPrice}")
 
                     if open_trade.order.lmtPrice == limit_price:
                         print(
@@ -342,26 +322,83 @@ def simple_scalp(strat):
                 refresh()
 
 
+BUY_SCALP = {
+    "margin_cushion_pct": 0,
+    "account": IBKR_ACCOUNT_1,
+    "strategy": "BUY TO OPEN SCALP",
+    "contract": "NQU2024",
+    "contract_id": None,
+    "tick_increment": 0.25,
+    "open_qty": 1,
+    "open_type": "LIMIT",
+    "open_action": "BUY",
+    "open_max": 19950,
+    "open_min": 1000,
+    "open_ref": "ask",
+    "close_qty": 1,
+    "close_type": "LIMIT",
+    "close_action": "SELL",
+    "close_ref": "open_fill",
+    "open_ticks": -15,
+    "close_ticks": 10,
+    "open_permid": None,
+    "close_permid": None,
+    "cancel_permid": None,
+    "pause_replace": 60,
+    "pause_restart": 60,
+}
+
+SELL_SCALP = {
+    "margin_cushion_pct": 0,
+    "account": IBKR_ACCOUNT_1,
+    "strategy": "SELL TO OPEN SCALP",
+    "contract": "NQU2024",
+    "contract_id": 637533450,
+    "tick_increment": 0.25,
+    "open_qty": 1,
+    "open_max": 21000,
+    "open_min": 20000,
+    "open_type": "LIMIT",
+    "open_action": "SELL",
+    "open_ref": "ask",
+    "open_ticks": 15,
+    "close_ticks": -10,
+    "close_qty": 1,
+    "close_type": "LIMIT",
+    "close_action": "BUY",
+    "close_ref": "open_fill",
+    "open_permid": None,
+    "close_permid": None,
+    "cancel_permid": None,
+    "open_ticks": 15,
+    "close_ticks": -10,
+    "pause_replace": 60,
+    "pause_restart": 60,
+}
+
+
 import argparse
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='My Python Script')
-    parser.add_argument('--strat', type=str, help='Strategy', default='sell')
+    parser.add_argument('--strat', type=str, help='Strategy', default='buy')
     parser.add_argument("--open_id", type=int, help="Open ID", default=0)
     parser.add_argument('--close_id', type=int, help='Close ID', default=0)
     parser.add_argument("--cancel_id", type=int, help="Cancel ID", default=0)
-    parser.add_argument("--open_ticks", type=int, help="Open Ticks", default=5)
-    parser.add_argument("--close_ticks", type=int, help="Close Ticks", default=-10)
+    parser.add_argument("--open_ticks", type=int, help="Open Ticks", default=None)
+    parser.add_argument("--close_ticks", type=int, help="Close Ticks", default=None)
+    parser.add_argument("--open_max", type=int, help="Open Max", default=None)
+    parser.add_argument("--open_min", type=int, help="Open Min", default=None)
     parser.add_argument("--debug", type=bool, help="Debug", default=False)
-    parser.add_argument("--open_push", type=bool, help="Open Push", default=False)
+    parser.add_argument("--open_push", type=bool, help="Open Push", default=True)
     parser.add_argument("--modify_push", type=bool, help="Modify Push", default=False)
-    parser.add_argument("--close_push", type=bool, help="Close Push", default=False)
+    parser.add_argument("--close_push", type=bool, help="Close Push", default=True)
     parser.add_argument("--push", type=bool, help="Push", default=True)
     parser.add_argument("--live", type=bool, help="Live", default=True)
     parser.add_argument("--margin_check", type=bool, help="Margin Check", default=True)
     parser.add_argument("--pause_replace", type=int, help="Pause Replace (sec)", default=30)
-    parser.add_argument("--pause_restart", type=int, help="Pause Restart (sec)", default=30)
+    parser.add_argument("--pause_restart", type=int, help="Pause Restart (sec)", default=10)
 
     args = parser.parse_args()
 
@@ -374,10 +411,16 @@ if __name__ == "__main__":
         ib.disconnect()
         exit(0)
 
-    if args.open_ticks != -1:
+    if args.open_max is not None:
+        STRATEGY["open_max"] = int(args.open_max)
+
+    if args.open_min is not None:
+        STRATEGY["open_min"] = int(args.open_min)
+
+    if args.open_ticks is not None:
         STRATEGY["open_ticks"] = int(args.open_ticks)
 
-    if args.close_ticks != -1:
+    if args.close_ticks is not None:
         STRATEGY["close_ticks"] = args.close_ticks
 
     STRATEGY["push"] = args.push

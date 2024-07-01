@@ -26,7 +26,7 @@ def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
     t1 = datetime.datetime.now().timestamp()
     now = datetime.datetime.now().timestamp()
 
-    while ib.waitOnUpdate():
+    while ib.sleep(10):
         print_clear()
         now = datetime.datetime.now().timestamp()
         if now - t1 > datetime.timedelta(seconds=duration).total_seconds():
