@@ -5504,3 +5504,5 @@
 2024-07-01 14:09:33,702 ib_async.wrapper INFO position: Position(account='U10394496', contract=Option(conId=642744523, symbol='NVDA', lastTradeDateOrContractMonth='20240920', strike=51.0, right='P', multiplier='100', currency='USD', localSymbol='NVDA  240920P00051000', tradingClass='NVDA'), position=10.0, avgCost=50.10369)
 2024-07-01 14:09:33,702 ib_async.wrapper INFO position: Position(account='U10394496', contract=Option(conId=682677111, symbol='AMZN', lastTradeDateOrContractMonth='20241018', strike=130.0, right='P', multiplier='100', currency='USD', localSymbol='AMZN  241018P00130000', tradingClass='AMZN'), position=4.0, avgCost=115.68685)
 2024-07-01 14:09:33,702 ib_async.wrapper INFO position: Position(account='U2340948', contract=Stock(conId=229726228, symbol='RSX', exchange='VALUE', currency='USD', localSymbol='RSX', tradingClass='RSX'), position=100.0, avgCost=6.889977)
+2024-07-01 14:14:52,350 ib_async.ib INFO Disconnecting from 192.168.1.82:4001, 5.79 kB sent in 561 messages, 12.3 MB received in 315266 messages, session time 2.20 ks.
+2024-07-01 14:14:52,351 ib_async.client INFO Disconnecting
