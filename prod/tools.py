@@ -116,6 +116,10 @@ def get_trade_by_permid(permid):
     return next((trade for trade in ib.trades() if trade.order.permId == permid), None)
 
 
+def get_order_by_permid(permid):
+    return next((order for order in ib.openOrders() if order.permId == permid), None)
+
+
 def get_last_trade_permid(n = -1):
     try:
         return ib.trades()[n].order.permId

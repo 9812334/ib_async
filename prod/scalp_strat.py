@@ -30,6 +30,21 @@ def simple_scalp(strat):
 
     ticker, contract = ticker_init(local_symbol=local_symbol)
 
+    if strat["cancel_permid"] is not None:
+        cxl_order = get_order_by_permid(strat["cancel_permid"])
+
+        if cxl_order is None:
+            print(f"Failed to find order by permid {strat['cancel_permid']}")
+        else:
+            cxl_trade = ib.cancelOrder(cxl_order.order)
+            ib.sleep(1)
+    
+            if cxl_trade.orderStatus.status == 'Cancelled':
+                print("Successfully canceled {cancel.order}")
+            else:
+                print(f"Failed to cancel {cxl_order}")
+    
+    
     push_notifications(
         f"{strat['strategy']} / {strat['open_ticks']}:{strat['close_ticks']} tickers / ({strat['pause_replace']}_replace_sec)({strat['pause_restart']}_restart_sec)"
     )
@@ -58,10 +73,7 @@ def simple_scalp(strat):
 
         print_strategy_summary(strat, open_trade, close_trade, ticker)
 
-        # if open_trade.orderStatus.status == 'PendingSubmit':
-        #     print(f"Waiting for pending open_trade to be canceled...")
-        #     cxl_order = ib.cancelOrder(open_trade.order)
-        #     continue
+
 
         if close_order_timestamp is not None and (
             datetime.datetime.now() - close_order_timestamp
@@ -378,8 +390,8 @@ SELL_SCALP = {
     "contract_id": 637533450,
     "tick_increment": 0.25,
     "open_qty": 1,
-    "open_max": 21000,
-    "open_min": 20000,
+    "open_max": 20300,
+    "open_min": 20075,
     "open_type": "LIMIT",
     "open_action": "SELL",
     "open_orderbook_bias_ratio_min": 2,
@@ -403,7 +415,7 @@ import argparse
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='My Python Script')
-    parser.add_argument('--strat', type=str, help='Strategy', default='buy')
+    parser.add_argument('--strat', type=str, help='Strategy', default='sell')
     parser.add_argument("--open_id", type=int, help="Open ID", default=None)
     parser.add_argument('--close_id', type=int, help='Close ID', default=None)
     parser.add_argument("--cancel_id", type=int, help="Cancel ID", default=None)
