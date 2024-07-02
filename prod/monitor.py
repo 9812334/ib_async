@@ -43,19 +43,15 @@ def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
 
         print_account_summary(accounts=accounts)
         print(f"-" * 50)
+
+        print_trades(status = 'Filled', tail = 15)
+        print(f"-" * 50)
         
-        if current_orders is None:
-            print(f"Open Orders: 0")
-        else:
-            print(f"Open Orders: {len(current_orders)}")
-
-            cols = ["localSymbol", "permId", "action", "totalQuantity", "orderType", "lmtPrice", "tif", "status"]
-            print(current_orders[cols])
-
+        print_trades(status="Submitted", tail=15)
         print(f"-" * 50)
-
-        current_executions = print_executions()
-        print(f"-" * 50)
+        
+        # current_executions = print_executions(tail = 6)
+        # print(f"-" * 50)
 
         current_positions = print_positions(contract=contract)
         print(f"-" * 50)
@@ -63,7 +59,7 @@ def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
         print_orderbook(ticker=ticker)
         print(f"-" * 50)
 
-        executions = current_executions
+        # executions = current_executions
         previous_orders = current_orders
         positions = current_positions
 

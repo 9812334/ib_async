@@ -346,7 +346,7 @@ BUY_SCALP = {
     "close_type": "LIMIT",
     "close_action": "SELL",
     "close_ref": "open_fill",
-    "open_ticks": -5,
+    "open_ticks": -10,
     "close_ticks": 10,
     "open_permid": None,
     "close_permid": None,
@@ -388,20 +388,20 @@ import argparse
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='My Python Script')
     parser.add_argument('--strat', type=str, help='Strategy', default='')
-    parser.add_argument("--open_id", type=int, help="Open ID", default=0)
-    parser.add_argument('--close_id', type=int, help='Close ID', default=0)
-    parser.add_argument("--cancel_id", type=int, help="Cancel ID", default=0)
+    parser.add_argument("--open_id", type=int, help="Open ID", default=None)
+    parser.add_argument('--close_id', type=int, help='Close ID', default=None)
+    parser.add_argument("--cancel_id", type=int, help="Cancel ID", default=None)
     parser.add_argument("--open_ticks", type=int, help="Open Ticks", default=None)
     parser.add_argument("--close_ticks", type=int, help="Close Ticks", default=None)
     parser.add_argument("--open_max", type=int, help="Open Max", default=None)
     parser.add_argument("--open_min", type=int, help="Open Min", default=None)
-    parser.add_argument("--debug", type=bool, help="Debug", default=False)
-    parser.add_argument("--open_push", type=bool, help="Open Push", default=True)
-    parser.add_argument("--modify_push", type=bool, help="Modify Push", default=False)
-    parser.add_argument("--close_push", type=bool, help="Close Push", default=True)
-    parser.add_argument("--push", type=bool, help="Push", default=True)
-    parser.add_argument("--live", type=bool, help="Live", default=True)
-    parser.add_argument("--margin_check", type=bool, help="Margin Check", default=True)
+    parser.add_argument("--debug", type=bool, help="Debug", default=None)
+    parser.add_argument("--open_push", type=bool, help="Open Push", default=None)
+    parser.add_argument("--modify_push", type=bool, help="Modify Push", default=None)
+    parser.add_argument("--close_push", type=bool, help="Close Push", default=None)
+    parser.add_argument("--push", type=bool, help="Push", default=None)
+    parser.add_argument("--live", type=bool, help="Live", default=None)
+    parser.add_argument("--margin_check", type=bool, help="Margin Check", default=None)
     parser.add_argument("--pause_replace", type=int, help="Pause Replace (sec)", default=None)
     parser.add_argument("--pause_restart", type=int, help="Pause Restart (sec)", default=None)
 
@@ -428,20 +428,45 @@ if __name__ == "__main__":
     if args.close_ticks is not None:
         STRATEGY["close_ticks"] = args.close_ticks
 
-    STRATEGY["push"] = args.push
-    STRATEGY["live"] = args.live
-    STRATEGY["debug"] = args.debug
-    STRATEGY["open_permid"] = args.open_id
-    STRATEGY["close_permid"] = args.close_id
-    STRATEGY["cancel_permid"] = args.cancel_id
-    STRATEGY["margin_check"] = args.margin_check
-    STRATEGY["modify_push"] = args.modify_push
-    STRATEGY["open_push"] = args.open_push
-    STRATEGY["close_push"] = args.close_push
-    
+    if args.push is not None:    
+        STRATEGY["push"] = args.push
+        
+    if args.debug is not None:
+       STRATEGY["debug"] = args.debug
+       
+    if args.margin_check is not None:
+        STRATEGY["margin_check"] = args.margin_check
+        
+    if args.modify_push is not None:
+        STRATEGY["modify_push"] = args.modify_push
+
+    if args.open_max is not None:
+        STRATEGY["open_max"] = args.open_max
+
+    if args.open_min is not None:
+        STRATEGY["open_min"] = args.open_min
+
+    if args.open_permid is not None:
+        STRATEGY["open_permid"] = args.open_permid
+
+    if args.close_permid is not None:
+        STRATEGY["close_permid"] = args.close_permid
+
+    if args.open_push is not None:
+        STRATEGY["open_push"] = args.open_push
+        
+    if args.close_push is not None:
+        STRATEGY["close_push"] = args.close_push
+        
+    if args.cancel_id is not None:
+        STRATEGY["cancel_permid"] = args.cancel_id
+        
+    if args.live is not None:
+        STRATEGY["live"] = args.live
+
     if args.pause_replace is not None:
         STRATEGY["pause_replace"] = args.pause_replace
-        
+
     if args.pause_restart is not None:
         STRATEGY["pause_restart"] = args.pause_restart
 

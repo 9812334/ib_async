@@ -182,19 +182,24 @@ def print_executions(cols = ["time", "side", "price", "permId", "shares"], tail 
 
     return executions_df
 
-def print_trades(tail = 5):
-    trades_df = util.df(ib.trades())
+def print_trades(status = 'Filled', tail = 10):
+    trades = ib.trades()
+
+    trades_df = util.df([t for t in trades if t.orderStatus.status == status])
 
     if trades_df is None:
-        print(f"Trades: 0")
+        print(f"{status}: 0")
     else:
-        print(f"Trades: {len(trades_df)}")
+        print(f"{status}: {len(trades_df)}")
 
         for i in range(len(trades_df.tail(tail))):
             t = trades_df.tail(tail).reset_index()
-            print(
-                f"{t.contract[i].localSymbol}\t{t.order[i].permId}\t{t.order[i].action}\t{trades_df.order[i].totalQuantity}\t{t.order[i].orderType}\t{t.order[i].lmtPrice} {t.order[i].tif}\t{t.orderStatus[i].status}"
-            )
+            if t.fills[0] != []:
+                print(f"{t.fills[i][0].time.strftime('%H:%M:%S')}\t{t.contract[i].localSymbol}\t{t.order[i].permId}\t{t.order[i].action}\t{trades_df.order[i].totalQuantity}\t{t.order[i].orderType}\t{t.order[i].lmtPrice} {t.order[i].tif}\t{t.orderStatus[i].status}")
+            else:
+                print(
+                    f"{t.contract[i].localSymbol}\t{t.order[i].permId}\t{t.order[i].action}\t{trades_df.order[i].totalQuantity}\t{t.order[i].orderType}\t{t.order[i].lmtPrice} {t.order[i].tif}\t{t.orderStatus[i].status}"
+                )
     return trades_df
 
 def print_strategy_summary(strategy_details, open_trade, close_trade, ticker = None):
@@ -214,8 +219,6 @@ def print_strategy_summary(strategy_details, open_trade, close_trade, ticker = N
         print_order(close_trade)
     else:
         print("Close Trade = None")
-    print_line()
-
     print_line()
     print_orderbook(ticker=ticker)
     print_line()
