@@ -10,12 +10,31 @@ parser.add_argument(
     default=1,
     help="Duration for monitoring overview (in seconds)",
 )
+parser.add_argument(
+    "--sym",
+    type=str,
+    default="NQU2024",
+    help="Duration for monitoring overview (in seconds)",
+)
+parser.add_argument(
+    "--push",
+    type=bool,
+    default=False,
+    help="Duration for monitoring overview (in seconds)",
+)
+parser.add_argument(
+    "--alert",
+    type=bool,
+    default=True,
+    help="Duration for monitoring overview (in seconds)",
+)
 
 args = parser.parse_args()
 
 import datetime
 
-def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
+
+def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration = 1):
     executions = []
     positions = []
     previous_orders = []
@@ -26,30 +45,31 @@ def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
     t1 = datetime.datetime.now().timestamp()
     now = datetime.datetime.now().timestamp()
 
-    while ib.sleep(1):
+    while ib.sleep(duration):
         current_orders = util.df(parse_ibrecords(ib.reqAllOpenOrders()))
 
         if len(previous_orders) != len(current_orders):
             alert()
-            ib.reqPositions()
-
+            # ib.reqPositions()
+            
+        ib.reqPositions()
+        ib.reqAllOpenOrders()
         print_clear()
         # now = datetime.datetime.now().timestamp()
         # if now - t1 > datetime.timedelta(seconds=duration).total_seconds():
         #     print(f"Time elapsed: {now - t1}")
-        #     ib.reqPositions()
-        #     ib.reqAllOpenOrders()
+
         #     t1 = datetime.datetime.now().timestamp()
 
         print_account_summary(accounts=accounts)
         print(f"-" * 50)
 
-        print_trades(status = 'Filled', tail = 15)
+        print_trades(status = 'Filled', tail = 10)
         print(f"-" * 50)
-        
-        print_trades(status="Submitted", tail=15)
+
+        print_trades(status="Submitted", tail=10)
         print(f"-" * 50)
-        
+
         # current_executions = print_executions(tail = 6)
         # print(f"-" * 50)
 
@@ -66,7 +86,7 @@ def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
 
 if __name__ == "__main__":
     try:
-        monitor_overview(local_symbol="NQU2024", duration=5)
+        monitor_overview(local_symbol=args.sym, duration=args.dur)
     except KeyboardInterrupt:
         print("Interrupted by user")
 

@@ -184,6 +184,7 @@ def print_executions(cols = ["time", "side", "price", "permId", "shares"], tail 
 
 def print_trades(status = 'Filled', tail = 10):
     trades = ib.trades()
+    trades.sort(key=lambda trade: trade.order.permId)
 
     trades_df = util.df([t for t in trades if t.orderStatus.status == status])
 
@@ -203,7 +204,6 @@ def print_trades(status = 'Filled', tail = 10):
     return trades_df
 
 def print_strategy_summary(strategy_details, open_trade, close_trade, ticker = None):
-    print_clear()
     print(
         f"{strategy_details['strategy']} / {strategy_details['open_ticks']}:{strategy_details['close_ticks']} tickers / ({strategy_details['pause_replace']}_replace_sec)({strategy_details['pause_restart']}_restart_sec)"
     )

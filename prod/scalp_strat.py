@@ -40,6 +40,7 @@ def simple_scalp(strat):
 
     close_order_timestamp = None
     open_order_timestamp = None
+    filled_order_timestamp = None
 
     if strat["debug"]:
         proceed = input("Proceed? ")
@@ -48,6 +49,12 @@ def simple_scalp(strat):
             exit()
 
     while ib.waitOnUpdate():
+        print_clear()
+        print_trades(status = 'Filled', tail = 15)
+        print(f"-" * 50)
+        
+        print_trades(status="Submitted", tail=15)
+        print(f"-" * 50)
 
         print_strategy_summary(strat, open_trade, close_trade, ticker)
 
@@ -183,15 +190,17 @@ def simple_scalp(strat):
                 print(
                     f"Waiting to get filled on order #{open_trade.order.permId} ({open_trade.orderStatus.status})"
                 )
+                
+                if open_order_timestamp is not None:
+                    print(
+                        f"  {strat['pause_replace'] - (datetime.datetime.now() - open_order_timestamp).seconds} seconds"
+                    )
 
                 if (
                     open_order_timestamp is None
                     or datetime.datetime.now() - open_order_timestamp
                     > datetime.timedelta(seconds=strat["pause_replace"])
                 ):
-                    print(
-                        f"OPEN Trade submitted, but not filled")
-
                     # find the price of opening the trade
                     if strat["open_ref"] == "bid":
                         price_ref = ticker.domBids[0].price
@@ -267,7 +276,6 @@ def simple_scalp(strat):
                     ib.disconnect()
                     exit()
 
-
                 limit_price = price_ref + strat["close_ticks"] * strat["tick_increment"]
 
                 if strat["close_type"] == "LIMIT":
@@ -300,6 +308,8 @@ def simple_scalp(strat):
                     print(f"[NOT LIVE] CLOSE ORDER PLACED:: {close_order}")
                     # print(f"CLOSE ORDER PLACED:: {close_trade.order}")
 
+                filled_order_timestamp = datetime.datetime.now()
+                
                 refresh()
 
         if close_trade is not None:
@@ -327,6 +337,10 @@ def simple_scalp(strat):
                 )
                 close_trade = None
                 refresh()
+            else:
+                print(
+                    f"Waiting to get filled on close_trade"
+                )
 
 
 BUY_SCALP = {
@@ -339,7 +353,8 @@ BUY_SCALP = {
     "open_qty": 1,
     "open_type": "LIMIT",
     "open_action": "BUY",
-    "open_max": 20000,
+    "open_orderbook_bias_ratio_min": 2,
+    "open_max": 20050,
     "open_min": 1000,
     "open_ref": "ask",
     "close_qty": 1,
@@ -351,8 +366,8 @@ BUY_SCALP = {
     "open_permid": None,
     "close_permid": None,
     "cancel_permid": None,
-    "pause_replace": 60,
-    "pause_restart": 60,
+    "pause_replace": 15,
+    "pause_restart": 15,
 }
 
 SELL_SCALP = {
@@ -367,6 +382,7 @@ SELL_SCALP = {
     "open_min": 20000,
     "open_type": "LIMIT",
     "open_action": "SELL",
+    "open_orderbook_bias_ratio_min": 2,
     "open_ref": "ask",
     "close_qty": 1,
     "close_type": "LIMIT",
@@ -375,10 +391,10 @@ SELL_SCALP = {
     "open_permid": None,
     "close_permid": None,
     "cancel_permid": None,
-    "open_ticks": 15,
+    "open_ticks": 10,
     "close_ticks": -10,
-    "pause_replace": 60,
-    "pause_restart": 60,
+    "pause_replace": 15,
+    "pause_restart": 15,
 }
 
 
@@ -387,7 +403,7 @@ import argparse
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='My Python Script')
-    parser.add_argument('--strat', type=str, help='Strategy', default='')
+    parser.add_argument('--strat', type=str, help='Strategy', default='buy')
     parser.add_argument("--open_id", type=int, help="Open ID", default=None)
     parser.add_argument('--close_id', type=int, help='Close ID', default=None)
     parser.add_argument("--cancel_id", type=int, help="Cancel ID", default=None)
@@ -395,13 +411,13 @@ if __name__ == "__main__":
     parser.add_argument("--close_ticks", type=int, help="Close Ticks", default=None)
     parser.add_argument("--open_max", type=int, help="Open Max", default=None)
     parser.add_argument("--open_min", type=int, help="Open Min", default=None)
-    parser.add_argument("--debug", type=bool, help="Debug", default=None)
-    parser.add_argument("--open_push", type=bool, help="Open Push", default=None)
-    parser.add_argument("--modify_push", type=bool, help="Modify Push", default=None)
-    parser.add_argument("--close_push", type=bool, help="Close Push", default=None)
-    parser.add_argument("--push", type=bool, help="Push", default=None)
-    parser.add_argument("--live", type=bool, help="Live", default=None)
-    parser.add_argument("--margin_check", type=bool, help="Margin Check", default=None)
+    parser.add_argument("--debug", type=bool, help="Debug", default=False)
+    parser.add_argument("--open_push", type=bool, help="Open Push", default=True)
+    parser.add_argument("--modify_push", type=bool, help="Modify Push", default=False)
+    parser.add_argument("--close_push", type=bool, help="Close Push", default=True)
+    parser.add_argument("--push", type=bool, help="Push", default=True)
+    parser.add_argument("--live", type=bool, help="Live", default=True)
+    parser.add_argument("--margin_check", type=bool, help="Margin Check", default=True)
     parser.add_argument("--pause_replace", type=int, help="Pause Replace (sec)", default=None)
     parser.add_argument("--pause_restart", type=int, help="Pause Restart (sec)", default=None)
 
@@ -446,11 +462,11 @@ if __name__ == "__main__":
     if args.open_min is not None:
         STRATEGY["open_min"] = args.open_min
 
-    if args.open_permid is not None:
-        STRATEGY["open_permid"] = args.open_permid
+    if args.open_id is not None:
+        STRATEGY["open_permid"] = args.open_id
 
-    if args.close_permid is not None:
-        STRATEGY["close_permid"] = args.close_permid
+    if args.close_id is not None:
+        STRATEGY["close_permid"] = args.close_id
 
     if args.open_push is not None:
         STRATEGY["open_push"] = args.open_push
