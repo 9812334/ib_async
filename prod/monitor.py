@@ -18,7 +18,7 @@ import datetime
 def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
     executions = []
     positions = []
-    open_orders = []
+    previous_orders = []
 
     ticker, contract = ticker_init(local_symbol= local_symbol)
 
@@ -26,27 +26,35 @@ def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
     t1 = datetime.datetime.now().timestamp()
     now = datetime.datetime.now().timestamp()
 
-    while ib.sleep(10):
-        print_clear()
-        now = datetime.datetime.now().timestamp()
-        if now - t1 > datetime.timedelta(seconds=duration).total_seconds():
-            print(f"Time elapsed: {now - t1}")
+    while ib.sleep(1):
+        current_orders = util.df(parse_ibrecords(ib.reqAllOpenOrders()))
+
+        if len(previous_orders) != len(current_orders):
+            alert()
             ib.reqPositions()
-            ib.reqAllOpenOrders()
-            t1 = datetime.datetime.now().timestamp()
 
+        print_clear()
+        # now = datetime.datetime.now().timestamp()
+        # if now - t1 > datetime.timedelta(seconds=duration).total_seconds():
+        #     print(f"Time elapsed: {now - t1}")
+        #     ib.reqPositions()
+        #     ib.reqAllOpenOrders()
+        #     t1 = datetime.datetime.now().timestamp()
+
+        print_account_summary(accounts=accounts)
         print(f"-" * 50)
+        
+        if current_orders is None:
+            print(f"Open Orders: 0")
+        else:
+            print(f"Open Orders: {len(current_orders)}")
 
-        print_account_summary(accounts = accounts)
+            cols = ["localSymbol", "permId", "action", "totalQuantity", "orderType", "lmtPrice", "tif", "status"]
+            print(current_orders[cols])
+
         print(f"-" * 50)
 
         current_executions = print_executions()
-        print(f"-" * 50)
-
-        if current_executions is not None and executions is not None and len(current_executions) != len(executions):
-            alert()
-
-        current_open_orders = print_openOrders()
         print(f"-" * 50)
 
         current_positions = print_positions(contract=contract)
@@ -56,7 +64,7 @@ def monitor_overview(local_symbol, accounts = [IBKR_ACCOUNT_1], duration=5):
         print(f"-" * 50)
 
         executions = current_executions
-        open_orders = current_open_orders
+        previous_orders = current_orders
         positions = current_positions
 
 

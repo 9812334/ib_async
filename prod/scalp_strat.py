@@ -339,14 +339,14 @@ BUY_SCALP = {
     "open_qty": 1,
     "open_type": "LIMIT",
     "open_action": "BUY",
-    "open_max": 19950,
+    "open_max": 20000,
     "open_min": 1000,
     "open_ref": "ask",
     "close_qty": 1,
     "close_type": "LIMIT",
     "close_action": "SELL",
     "close_ref": "open_fill",
-    "open_ticks": -15,
+    "open_ticks": -5,
     "close_ticks": 10,
     "open_permid": None,
     "close_permid": None,
@@ -368,8 +368,6 @@ SELL_SCALP = {
     "open_type": "LIMIT",
     "open_action": "SELL",
     "open_ref": "ask",
-    "open_ticks": 15,
-    "close_ticks": -10,
     "close_qty": 1,
     "close_type": "LIMIT",
     "close_action": "BUY",
@@ -404,8 +402,8 @@ if __name__ == "__main__":
     parser.add_argument("--push", type=bool, help="Push", default=True)
     parser.add_argument("--live", type=bool, help="Live", default=True)
     parser.add_argument("--margin_check", type=bool, help="Margin Check", default=True)
-    parser.add_argument("--pause_replace", type=int, help="Pause Replace (sec)", default=30)
-    parser.add_argument("--pause_restart", type=int, help="Pause Restart (sec)", default=10)
+    parser.add_argument("--pause_replace", type=int, help="Pause Replace (sec)", default=None)
+    parser.add_argument("--pause_restart", type=int, help="Pause Restart (sec)", default=None)
 
     args = parser.parse_args()
 
@@ -440,8 +438,12 @@ if __name__ == "__main__":
     STRATEGY["modify_push"] = args.modify_push
     STRATEGY["open_push"] = args.open_push
     STRATEGY["close_push"] = args.close_push
-    STRATEGY["pause_replace"] = args.pause_replace
-    STRATEGY["pause_restart"] = args.pause_restart
+    
+    if args.pause_replace is not None:
+        STRATEGY["pause_replace"] = args.pause_replace
+        
+    if args.pause_restart is not None:
+        STRATEGY["pause_restart"] = args.pause_restart
 
     try:
         pprint.pprint(f"STRATEGY CONFIG: \n {STRATEGY}")
