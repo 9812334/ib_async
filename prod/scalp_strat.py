@@ -412,7 +412,6 @@ SELL_SCALP = {
 
 import argparse
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='My Python Script')
     parser.add_argument('--strat', type=str, help='Strategy', default='sell')
