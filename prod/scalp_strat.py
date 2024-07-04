@@ -366,7 +366,7 @@ BUY_SCALP = {
     "open_type": "LIMIT",
     "open_action": "BUY",
     "open_orderbook_bias_ratio_min": 2,
-    "open_max": 20500,
+    "open_max": 20050,
     "open_min": 1000,
     "open_ref": "ask",
     "close_qty": 1,
