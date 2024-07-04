@@ -65,10 +65,10 @@ def simple_scalp(strat):
 
     while ib.waitOnUpdate():
         print_clear()
-        print_trades(status = 'Filled', tail = 15)
+        print_trades(status = 'Filled', tail = 5)
         print(f"-" * 50)
         
-        print_trades(status="Submitted", tail=15)
+        print_trades(status="Submitted", tail=5)
         print(f"-" * 50)
 
         print_strategy_summary(strat, open_trade, close_trade, ticker)
@@ -366,20 +366,20 @@ BUY_SCALP = {
     "open_type": "LIMIT",
     "open_action": "BUY",
     "open_orderbook_bias_ratio_min": 2,
-    "open_max": 20050,
+    "open_max": 20500,
     "open_min": 1000,
     "open_ref": "ask",
     "close_qty": 1,
     "close_type": "LIMIT",
     "close_action": "SELL",
     "close_ref": "open_fill",
-    "open_ticks": -10,
+    "open_ticks": -11,
     "close_ticks": 10,
     "open_permid": None,
     "close_permid": None,
     "cancel_permid": None,
-    "pause_replace": 15,
-    "pause_restart": 15,
+    "pause_replace": 30,
+    "pause_restart": 30,
 }
 
 SELL_SCALP = {
@@ -390,7 +390,7 @@ SELL_SCALP = {
     "contract_id": 637533450,
     "tick_increment": 0.25,
     "open_qty": 1,
-    "open_max": 20300,
+    "open_max": 20295,
     "open_min": 20075,
     "open_type": "LIMIT",
     "open_action": "SELL",
