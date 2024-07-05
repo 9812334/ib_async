@@ -38,13 +38,12 @@ def simple_scalp(strat):
         else:
             cxl_trade = ib.cancelOrder(cxl_order.order)
             ib.sleep(1)
-    
+
             if cxl_trade.orderStatus.status == 'Cancelled':
                 print("Successfully canceled {cancel.order}")
             else:
                 print(f"Failed to cancel {cxl_order}")
-    
-    
+
     push_notifications(
         f"{strat['strategy']} / {strat['open_ticks']}:{strat['close_ticks']} tickers / ({strat['pause_replace']}_replace_sec)({strat['pause_restart']}_restart_sec)"
     )
@@ -67,14 +66,19 @@ def simple_scalp(strat):
         print_clear()
         print_trades(status = 'Filled', tail = 5)
         print(f"-" * 50)
-        
+
         print_trades(status="Submitted", tail=5)
         print(f"-" * 50)
 
         print_strategy_summary(strat, open_trade, close_trade, ticker)
+        print(f"-" * 50)
 
-
-
+        print_positions(contract=contract)
+        print(f"-" * 50)
+        
+        print_account_summary(accounts=[IBKR_ACCOUNT_1])
+        print(f"-" * 50)
+        
         if close_order_timestamp is not None and (
             datetime.datetime.now() - close_order_timestamp
             < datetime.timedelta(seconds=strat["pause_restart"])
@@ -202,7 +206,7 @@ def simple_scalp(strat):
                 print(
                     f"Waiting to get filled on order #{open_trade.order.permId} ({open_trade.orderStatus.status})"
                 )
-                
+
                 if open_order_timestamp is not None:
                     print(
                         f"  {strat['pause_replace'] - (datetime.datetime.now() - open_order_timestamp).seconds} seconds"
@@ -321,7 +325,7 @@ def simple_scalp(strat):
                     # print(f"CLOSE ORDER PLACED:: {close_trade.order}")
 
                 filled_order_timestamp = datetime.datetime.now()
-                
+
                 refresh()
 
         if close_trade is not None:
@@ -366,20 +370,20 @@ BUY_SCALP = {
     "open_type": "LIMIT",
     "open_action": "BUY",
     "open_orderbook_bias_ratio_min": 2,
-    "open_max": 20250,
-    "open_min": 1000,
+    "open_max": 20600,
+    "open_min": 0,
     "open_ref": "ask",
     "close_qty": 1,
     "close_type": "LIMIT",
     "close_action": "SELL",
     "close_ref": "open_fill",
-    "open_ticks": -11,
+    "open_ticks": -15,
     "close_ticks": 10,
     "open_permid": None,
     "close_permid": None,
     "cancel_permid": None,
-    "pause_replace": 30,
-    "pause_restart": 30,
+    "pause_replace": 10,
+    "pause_restart": 10,
 }
 
 SELL_SCALP = {
@@ -390,7 +394,7 @@ SELL_SCALP = {
     "contract_id": 637533450,
     "tick_increment": 0.25,
     "open_qty": 1,
-    "open_max": 20295,
+    "open_max": 23475,
     "open_min": 20075,
     "open_type": "LIMIT",
     "open_action": "SELL",
@@ -414,7 +418,7 @@ import argparse
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='My Python Script')
-    parser.add_argument('--strat', type=str, help='Strategy', default='sell')
+    parser.add_argument('--strat', type=str, help='Strategy', default='')
     parser.add_argument("--open_id", type=int, help="Open ID", default=None)
     parser.add_argument('--close_id', type=int, help='Close ID', default=None)
     parser.add_argument("--cancel_id", type=int, help="Cancel ID", default=None)
